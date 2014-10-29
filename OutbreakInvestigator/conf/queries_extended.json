@@ -1,0 +1,23 @@
+{
+    "queries": [
+        {
+            "title":"Cases by report date range",
+            "template":"select from Case where REPORT_DT >= '$1' AND REPORT_DT <= '$2'",
+            "args":[
+                {"var":"$1", "label":"begin date","valtype":"date", "default":"2009-09-01"},
+                {"var":"$2", "label":"end date","valtype":"date", "default":"2009-12-31"}
+            ]
+        },
+        {
+            "title":"Cases by simple comparison",
+            "template":"select from Case where $1 $2 '$3'",
+            "args":[
+                {"var":"$1", "label":"field name","valtype":"text", "default":"REPORT_DT"},
+                {"var":"$3", "label":"field value","valtype":"text", "default":"2009-09-01"},
+                {"var":"$2", "label":"comparison operator","valtype":"text", "vals":["=","<=",">="], "default":"="}
+            ]
+        }
+    ],
+    "vertex_query_url": "/OBIServices/rest/gds/vquery?query=",
+    "edge_query_url": "/OBIServices/rest/gds/equery?query="
+}
