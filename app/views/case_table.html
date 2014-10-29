@@ -1,0 +1,16 @@
+<div class="fill"  ng-controller="CaseTableCtrl" casetable-vis select="selectRow()">
+<!--    <table class="table">
+        <tr>
+            <th ng-repeat="caseInfoField in caseInfoFields">{{caseInfoField.display_text}}</th>
+        </tr>
+        <tr ng-repeat="case in cases | orderBy:predicate" >
+            <td ng-repeat="caseInfoField in caseInfoFields">{{case[caseInfoField.data_field]}}</td>
+        </tr>
+    </table>-->
+    
+     <div class="custom-csv-link-location" >
+        <span   class="ui-grid-exporter-csv-link" export></span>
+      </div>
+       <div ui-grid="gridOptions" ui-grid-selection ui-grid-resize-columns ui-grid-auto-resize ui-grid-exporter class="fill"></div>
+    
+</div>

@@ -1,0 +1,12 @@
+{
+    "queries": [
+        {"title":"cases 9/1/2009-12/31/2009",
+            "query":"select from Case where REPORT_DT >= '2009-09-01' AND REPORT_DT <= '2009-12-31'"},
+        {"title":"cases 9/1/2007-12/31/2009",
+            "query":"select from Case where REPORT_DT >= '2007-09-01' AND REPORT_DT <= '2009-12-31'"},
+        {"title":"cases under 9 years of age",
+            "query":"select from Case where AGEYEARS < 9"}
+    ],
+    "vertex_query_url": "/OBIDataServices/rest/gds/vquery?query=",
+    "edge_query_url": "/OBIDataServices/rest/gds/equery?query="
+}

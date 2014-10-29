@@ -1,0 +1,39 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Fetch Data</h4>
+    </div>
+    <div class="modal-body">
+        <!--Precanned queries or query options here...-->
+        <!--
+        <label ng-repeat="query in queries" >
+            <input type="radio" ng-model="selectedQuery" value="{{query.query}}"/>
+            {{query.title}} <br/>
+        </label>
+        -->
+        <!--<span><a ng-repeat="(title,url) in queries">{{title}}</a></span>-->
+        <fieldset>
+            <div ng-repeat="query in queries">
+                <a ng-class='getClass(query.template)' href="javascript:void(0)" ng-click='setSelectedQuery(query.template)'>{{query.title}}</a></div>
+        </fieldset>
+        <query-complete></query-complete>
+
+        <div ng-if="selectedQuery">
+            <hr>
+            <div ng-repeat="query in queries | filter:{template: selectedQuery}">
+                <div ng-repeat="arg in query.args">{{arg.label}}: <input class="queryarg" type="{{arg.valtype}}" name="{{arg.var}}" value="{{arg.default}}"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <span>{{data.edges.length}}</span>
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="query(selectedQuery)">Execute</button>
+        <loading></loading>
+    </div>
+</div>
+
+
+
+
