@@ -1,3 +1,5 @@
+This projected is licensed under the terms of the GPL license.
+
 Setting Up Dev Environment (Windows OS)
 GitHub
 1. Install GitHub App (windows and Mac)
