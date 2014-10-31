@@ -1,3 +1,5 @@
+/***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)***/
+/***** http://faculty.washington.edu/neila/ ****/
 
 angular.module('obiUiApp')
         .controller("CaseTableCtrl", function ($scope, $http, graphService, displayService, eventService, timelineService) {

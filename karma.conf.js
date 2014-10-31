@@ -1,3 +1,5 @@
+/***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)***/
+/***** http://faculty.washington.edu/neila/ ****/
 // Karma configuration
 // http://karma-runner.github.io/0.10/config/configuration-file.html
 

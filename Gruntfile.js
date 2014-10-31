@@ -1,3 +1,5 @@
+/***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)***/
+/***** http://faculty.washington.edu/neila/ ****/
 // Generated on 2013-12-04 using generator-angular 0.6.0-rc.1
 'use strict';
 
