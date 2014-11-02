@@ -168,11 +168,14 @@ svg {
 .logo-img {
     height:50px;
     float:left;
+    font-family: 'Verdana, Arial, sans-serif';
 }
 
 #logo-text {
     /*background-color: darkorange;*/
-    color: #f5f5f5;
+    color: #666666;
+    font-size: 200%;
+    text-transform: uppercase;
 }
 
 #copyright-text {
