@@ -5,7 +5,7 @@
             "template":"select from Case where REPORT_DT >= '$1' AND REPORT_DT <= '$2'",
             "args":[
                 {"var":"$1", "label":"begin date","valtype":"date", "default":"2009-09-01"},
-                {"var":"$2", "label":"end date","valtype":"date", "default":"2009-12-31"}
+                {"var":"$2", "label":"end date","valtype":"date", "default":"2015-12-31"}
             ]
         },
         {

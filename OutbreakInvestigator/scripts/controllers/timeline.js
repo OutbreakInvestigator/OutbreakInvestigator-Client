@@ -54,9 +54,11 @@ angular.module('obiUiApp')
                         });
 
                         var dateGroup = dateDimension.group().reduceCount();
-
+ 
                         var minDate = new Date(dateDimension.bottom(1)[0].REPORT_DT);
+                         minDate.setHours(minDate.getHours()-3);
                         var maxDate = new Date(dateDimension.top(1)[0].REPORT_DT);
+                        maxDate.setHours(maxDate.getHours()+3);
 
                         chart
                             .width(elem.width())
