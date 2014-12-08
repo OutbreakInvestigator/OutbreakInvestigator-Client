@@ -61,6 +61,12 @@ angular.module('obiUiApp')
                 else if (newVal !== oldVal)
                     reloadGraph(newVal);
             });
+            
+            $scope.resetUI = function()
+            {
+                console.log('table resettting');
+                 reloadGraph(graphService.getGraph());
+            };
  
             $scope.selectRow = function ()
             {
@@ -126,6 +132,10 @@ angular.module('obiUiApp')
 
                     scope.$on('rightFilterUpdate', function (evt, filter) {
                         scope.$evalAsync(attrs.select);
+                    });
+                    
+                      scope.$on('resetUI', function (evt, filter) {
+                        scope.$evalAsync(attrs.resetui);
                     });
                 }
             };

@@ -109,6 +109,11 @@ angular.module('obiUiApp')
             },
             rebroadcastSelCases: function() {
                 $rootScope.$broadcast('selCasesUpdate', selCases);
+            },
+            rebroadcastResetUI: function() {
+                console.log('resetting');
+                selCases = [];
+                $rootScope.$broadcast('resetUI');
             }
         };
     });

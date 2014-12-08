@@ -13,6 +13,11 @@ angular.module('obiUiApp')
                 scope: {},
                 link: function (scope, elem, attrs) {
                     var uid = elem.uniqueId();
+
+                    scope.$on('resetUI', function (evt, filter) {
+                        rebuildMap();
+                    });
+
                     scope.$on('leftFilterUpdate', function (evt, filter) {
                         if (getPosition(elem[0]) == "left")
                         {
@@ -259,7 +264,7 @@ angular.module('obiUiApp')
 
                     }
 
- 
+
                     scope.$watch(eventService.getUIMode, function (newVal, oldVal) {
                         prepareForSelect(newVal);
                     });

@@ -24,6 +24,7 @@
         {
             "name": "dbid",
             "displayName": "ID",
+            "type":"number",
               "sort": {
                 "direction": "asc",
                         "priority": "1"
@@ -36,12 +37,12 @@
         {
             "name": "ONSET_DT",
             "displayName": "Date (onset)",
-            "type" : "date"
+            "type" : "date" 
         },
         {
             "name": "REPORT_DT",
             "displayName": "Date (report)",
-            "type" : "date"
+            "type" : "date" 
         }
     ]
 }

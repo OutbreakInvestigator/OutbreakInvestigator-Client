@@ -64,7 +64,6 @@ angular.module('obiUiApp')
                     success(function(data, status) {
                         //$scope.status = status;
                         //$scope.data = data;
-
                         // populate graph
                         graph = {};
                         var nodes = [];
