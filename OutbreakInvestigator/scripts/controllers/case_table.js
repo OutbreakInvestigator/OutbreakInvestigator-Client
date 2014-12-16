@@ -2,12 +2,13 @@
 /***** http://faculty.washington.edu/neila/ ****/
 
 angular.module('obiUiApp')
-        .controller("CaseTableCtrl", function ($scope, $http, graphService, displayService, eventService, timelineService) {
+        .controller("CaseTableCtrl", function ($scope, $http, $timeout,graphService, displayService, eventService, timelineService) {
             $scope.uid;
             $scope.gridOptions = {
                 enableRowSelection: true,
                 enableSelectAll: true,
-                enableRowHeaderSelection: false,
+                enableRowHeaderSelection: true,
+                selectionRowHeaderWidth: 35,
                 enableGridMenu: true,
 //                exporterLinkLabel: 'get your csv here',
                 exporterPdfDefaultStyle: {fontSize: 8},
@@ -18,11 +19,36 @@ angular.module('obiUiApp')
                 exporterPdfMaxGridWidth: 500,
                 exporterLinkTemplate: "<span class=\"ui-grid-exporter-csv-link-span\" ><a    download=\"OutbreakInvestigator.csv\" href=\"data:text/csv;charset=UTF-8,CSV_CONTENT\" target=\"_blank\" >LINK_LABEL</a></span>",
                 exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
-               
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
+                    $scope.gridApi.selection.on.rowSelectionChanged($scope, $scope.rowSelectionChanged);
                 }
             };
+            $scope.rowSelectionChanged = function (row)
+            {
+
+
+                var selRows = $scope.gridApi.selection.getSelectedRows();
+                if (eventService.getUIMode() == 'multiselect')
+                {
+                    if (selRows.length > 0)
+                        eventService.setSelCases(selRows, row.uid);
+
+                    else
+                        eventService.setSelCases([], row.uid);
+                }
+                else if (eventService.getUIMode() == 'select')
+                {
+                    if (row.isSelected)
+                        eventService.setSelCases([row.entity], row.uid);
+
+                    else
+                        eventService.setSelCases([], row.uid);
+
+                }
+
+            };
+
             $scope.gridOptions.columnDefs = displayService.getCaseInfoFieldsGrid();
             angular.forEach($scope.gridOptions.columnDefs, function (value, key) {
                 if (value.type && value.type === 'date')
@@ -50,30 +76,42 @@ angular.module('obiUiApp')
             // data
             $scope.cases = [];
             if (graphService.getGraph())
+            {
                 reloadGraph(graphService.getGraph());
+                $timeout(function () {
+                    var selCases = {};
+                    selCases.nodes = eventService.getSelCases()
+                    if (selCases.nodes && selCases.nodes.length > 0)
+                        reloadGraph(selCases);
+
+                });
+            }
 
             $scope.$watch(graphService.getGraph, function (newVal, oldVal)
             {
                 var selCases = {};
-                selCases.nodes = eventService.getSelCases();  
+                selCases.nodes = eventService.getSelCases();
                 if (selCases.nodes && selCases.nodes.length > 0)
                     reloadGraph(selCases);
                 else if (newVal !== oldVal)
                     reloadGraph(newVal);
             });
-            
-            $scope.resetUI = function()
+
+            $scope.resetUI = function ()
             {
-                console.log('table resettting');
-                 reloadGraph(graphService.getGraph());
+                reloadGraph(graphService.getGraph());
+                $scope.gridApi.selection.clearSelectedRows();
             };
- 
+
             $scope.selectRow = function ()
             {
                 removeDownloadLink();
 
+                $scope.gridApi.suppressEvents($scope.rowSelectionChanged, function () {
+                    $scope.gridApi.selection.clearSelectedRows();
+                });
                 var selCases = {};
-                selCases.nodes = eventService.getSelCases(); 
+                selCases.nodes = eventService.getSelCases();
                 if (selCases.nodes && selCases.nodes.length > 0)
                     reloadGraph(selCases);
                 else
@@ -113,10 +151,30 @@ angular.module('obiUiApp')
                     }
                 }
                 $scope.cases = graph_data.nodes;
-                $scope.gridOptions.data = graph_data.nodes;
+                if ($scope.gridOptions.data == undefined) {
+                    $scope.gridOptions.data = graph_data.nodes;
+                }
+                else if ((graph_data.nodes.length) < ($scope.gridOptions.data.length))
+                {
+                    angular.forEach(graph_data.nodes, function (graphdata, gindex) {
+
+                        for (var i = 0; i < $scope.gridOptions.data.length; i++) {
+                            if ($scope.gridOptions.data[i].dbid === graphdata.dbid) {
+
+                                $scope.gridApi.suppressEvents($scope.rowSelectionChanged, function () {
+                                    $scope.gridApi.selection.selectRow($scope.gridOptions.data[i]);
+                                });
+
+                            }
+                        }
+                        ;
+
+                    });
+                }
             }
 
-        })
+        }
+        )
         .directive('casetableVis', function ($window, $document, graphService, eventService, displayService) {
             return {
                 restrict: 'A',
@@ -133,11 +191,11 @@ angular.module('obiUiApp')
                     scope.$on('rightFilterUpdate', function (evt, filter) {
                         scope.$evalAsync(attrs.select);
                     });
-                    
-                      scope.$on('resetUI', function (evt, filter) {
+
+                    scope.$on('resetUI', function (evt, filter) {
                         scope.$evalAsync(attrs.resetui);
                     });
                 }
             };
         });
-        
+
