@@ -262,6 +262,10 @@ angular.module('obiUiApp')
                             rebuildMap();
                         });
 
+                        google.maps.event.addListener(scope.map,  'click', function () {
+                            prepareForSelect(eventService.getUIMode());
+                        });
+
                     }
 
 
