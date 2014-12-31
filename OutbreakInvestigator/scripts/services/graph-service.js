@@ -5,7 +5,7 @@
 angular.module('obiUiApp')
     .service('graphService', function ($rootScope,$http) {
         var graph;
-        var loaded = true;
+        var loaded;
        // var selectedGraph;
 
         // query stuff
@@ -97,6 +97,7 @@ angular.module('obiUiApp')
                         graph.nodes = nodes;
                         graph.links = links;
                         loaded=true;
+                      
                     }).
                     error(function(data, status) {
                        // $scope.status = status || "Request failed";

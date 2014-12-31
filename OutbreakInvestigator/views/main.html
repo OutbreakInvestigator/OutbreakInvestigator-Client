@@ -2,10 +2,10 @@
 <!-- ***** http://faculty.washington.edu/neila/ ****-->
 <div class="outer-north">
     <div id="toolbar" class="ui-widget-header ui-corner-all pull-right">
-        <button id="fetch">Update</button>
+        <button id="fetch">Query</button>
         <button id="reset">Reset</button>
         <button id="about">About</button>
-        <button id="contact">Contact</button>
+        <!--<button id="contact">Contact</button>-->
         <span style="margin:1em"></span>
         <div class="btn-group">
             <label id="select-pointer" class="btn btn-primary" ng-model="mode" btn-radio="'select'" >
@@ -36,19 +36,19 @@
 
             <div class="vis-panel fill" ng-switch on="leftPanel" pos="left">
                 <div ng-switch-when="table" class="fill">
-                    <div ng-include="'views/case_table.html'" ng-controller='CaseTableCtrl' class="fill"/>
+                    <div ng-include="'views/case_table.html'"  class="fill"/>
                 </div>
                 <div ng-switch-when="network" class="fill">
-                    <div ng-include="'views/network.html'" ng-controller='NetworkCtrl' class="fill"/>
+                    <div ng-include="'views/network.html'"   class="fill"/>
                 </div>
                 <div ng-switch-when="network fixed on time line" class="fill">
-                    <div ng-include="'views/networkWithFixedX.html'" ng-controller='NetworkWithFixedXCtrl' class="fill"/>
+                    <div ng-include="'views/networkWithFixedX.html'"  class="fill"/>
                 </div> 
                 <div ng-switch-when="map (dot)" class="fill">
-                    <div id="leftDotMapPanel" ng-include="'views/map_dot.html'" ng-controller='DotmapCtrl' class="fill"/>
+                    <div id="leftDotMapPanel" ng-include="'views/map_dot.html'" class="fill"/>
                 </div>
                 <div ng-switch-when="map (choropleth)" class="fill">
-                    <div ng-include="'views/map_chor.html'" ng-controller='ChoroplethCtrl' class="fill"/>
+                    <div ng-include="'views/map_chor.html'"   class="fill"/>
                 </div>
             </div>
 
@@ -64,19 +64,19 @@
 
             <div class="vis-panel fill" ng-switch on="rightPanel" pos="right">
                 <div ng-switch-when="table" class="fill">
-                    <div ng-include="'views/case_table.html'" ng-controller='CaseTableCtrl' class="fill"/>
+                    <div ng-include="'views/case_table.html'" class="fill"/>
                 </div>
                 <div ng-switch-when="network" class="fill">
-                    <div ng-include="'views/network.html'" ng-controller='NetworkCtrl' class="fill"/>
+                    <div ng-include="'views/network.html'"  class="fill"/>
                 </div>
                 <div ng-switch-when="network fixed on time line" class="fill">
-                    <div ng-include="'views/networkWithFixedX.html'" ng-controller='NetworkWithFixedXCtrl' class="fill"/>
+                    <div ng-include="'views/networkWithFixedX.html'"  class="fill"/>
                 </div> 
                 <div ng-switch-when="map (dot)" class="fill">
-                    <div id="rightDotMapPanel" ng-include="'views/map_dot.html'" ng-controller='DotmapCtrl' class="fill"/>
+                    <div id="rightDotMapPanel" ng-include="'views/map_dot.html'"  class="fill"/>
                 </div>
                 <div ng-switch-when="map (choropleth)" class="fill">
-                    <div ng-include="'views/map_chor.html'" ng-controller='ChoroplethCtrl' class="fill"/>
+                    <div ng-include="'views/map_chor.html'" class="fill"/>
                 </div>
             </div>
         </div>
