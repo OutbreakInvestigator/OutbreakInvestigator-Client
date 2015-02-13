@@ -2,14 +2,13 @@
 /***** http://faculty.washington.edu/neila/ ****/
 
 angular.module('obiUiApp')
-        .controller("CaseTableCtrl", function ($scope, $http, $timeout, graphService, displayService, eventService, timelineService) {
+        .controller("CaseTableCtrl", function ($scope, $http, $timeout,graphService, displayService, eventService, timelineService) {
             $scope.uid;
             $scope.gridOptions = {
                 enableRowSelection: true,
                 enableSelectAll: true,
                 enableRowHeaderSelection: true,
                 selectionRowHeaderWidth: 35,
-                useExternalSorting: false,
                 enableGridMenu: true,
 //                exporterLinkLabel: 'get your csv here',
                 exporterPdfDefaultStyle: {fontSize: 8},
@@ -23,24 +22,11 @@ angular.module('obiUiApp')
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
                     $scope.gridApi.selection.on.rowSelectionChanged($scope, $scope.rowSelectionChanged);
-                    $scope.gridApi.core.on.sortChanged($scope, function (grid, sortCol) {
-                        if ($scope.gridOptions.useExternalSorting)
-                        {
-                            $scope.gridOptions.data = grid.options.data;
-                            grid.refresh();
-                            $timeout(function () {
-                                grid.resetColumnSorting();
-                                $scope.gridOptions.useExternalSorting = false;
-                            }, 100);
-                        }
-
-                    });
                 }
             };
-
-
             $scope.rowSelectionChanged = function (row)
             {
+
 
                 var selRows = $scope.gridApi.selection.getSelectedRows();
                 if (eventService.getUIMode() == 'multiselect')
@@ -58,7 +44,9 @@ angular.module('obiUiApp')
 
                     else
                         eventService.setSelCases([], row.uid);
+
                 }
+
             };
 
             $scope.gridOptions.columnDefs = displayService.getCaseInfoFieldsGrid();
@@ -82,6 +70,7 @@ angular.module('obiUiApp')
                     };
                 }
                 ;
+
             });
 
             // data
@@ -93,8 +82,7 @@ angular.module('obiUiApp')
                     var selCases = {};
                     selCases.nodes = eventService.getSelCases()
                     if (selCases.nodes && selCases.nodes.length > 0)
-//                        reloadGraph(selCases);
-                        $scope.selectRow();
+                        reloadGraph(selCases);
 
                 });
             }
@@ -104,41 +92,15 @@ angular.module('obiUiApp')
                 var selCases = {};
                 selCases.nodes = eventService.getSelCases();
                 if (selCases.nodes && selCases.nodes.length > 0)
-//                    reloadGraph(selCases);
-                    $timeout(function() {$scope.selectRow();});
+                    reloadGraph(selCases);
                 else if (newVal !== oldVal)
                     reloadGraph(newVal);
-                
             });
 
             $scope.resetUI = function ()
             {
                 reloadGraph(graphService.getGraph());
                 $scope.gridApi.selection.clearSelectedRows();
-            };
-
-            $scope.updateFilter = function ()
-            {
-                removeDownloadLink();
-                var timeline = timelineService.getTimeline();
-                if (timeline)
-                {
-                    var filters = timeline.filters()[0];
-                    if (filters)
-                    {
-                        var filteredCase = {};
-                        filteredCase.nodes = graphService.getGraph().nodes.filter(function (cif) {
-                            return ((new Date(cif.REPORT_DT)).getTime() >= filters[0].getTime() &&
-                                    (new Date(cif.REPORT_DT)).getTime() <= filters[1].getTime());
-                        });
-                        //angular.copy(filteredCase, $scope.gridOptions.data);
-                         reloadGraph(filteredCase);
-                        
-                         $timeout(function() {$scope.selectRow();});
-                    }
-                }
-               
-
             };
 
             $scope.selectRow = function ()
@@ -150,20 +112,15 @@ angular.module('obiUiApp')
                 });
                 var selCases = {};
                 selCases.nodes = eventService.getSelCases();
-                selectGraph(selCases.nodes );
-//                if (selCases.nodes && selCases.nodes.length > 0)
-//                    reloadGraph(selCases);
-//                else
-//                {
-//                    reloadGraph(graphService.getGraph());
-//                }
+                if (selCases.nodes && selCases.nodes.length > 0)
+                    reloadGraph(selCases);
+                else
+                {
+                    reloadGraph(graphService.getGraph());
+                }
 
             };
 
-            $scope.sortSelected = function (data)
-            {
-                $scope.gridOptions.data = data;
-            };
 
             function removeDownloadLink()
             {
@@ -173,70 +130,47 @@ angular.module('obiUiApp')
                     angular.element(targetElm[0].querySelectorAll('.ui-grid-exporter-csv-link-span')).remove();
                 }
             }
-            
-            function selectGraph(graphdata)
-            {
-                    angular.forEach(graphdata, function (data, gindex) {
-
-                        for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-                            if ($scope.gridOptions.data[i].dbid === data.dbid) {
-
-                                if ($scope.gridApi != undefined)
-                                    $scope.gridApi.suppressEvents($scope.rowSelectionChanged, function () {
-                                        $scope.gridApi.selection.selectRow($scope.gridOptions.data[i]);
-                                    });
-
-                            }
-                        }
-                        ;
-
-                    });
-            }
-            
 
             function reloadGraph(newGraph)
             {
                 var graph_data = {};
                 angular.copy(newGraph, graph_data);
 
-//                var timeline = timelineService.getTimeline();
-//                if (timeline)
-//                {
-//                    var filters = timeline.filters()[0];
-//                    if (filters)
-//                    {
-//                        var filteredCase = {};
-//                        filteredCase.nodes = graph_data.nodes.filter(function (cif) {
-//                            return ((new Date(cif.REPORT_DT)).getTime() >= filters[0].getTime() &&
-//                                    (new Date(cif.REPORT_DT)).getTime() <= filters[1].getTime());
-//                        });
-//                        angular.copy(filteredCase, graph_data);
-//                    }
-//                }
-                $scope.cases = graph_data.nodes;
-//                if (($scope.gridOptions.data == undefined)) 
+                var timeline = timelineService.getTimeline();
+                if (timeline)
                 {
+                    var filters = timeline.filters()[0];
+                    if (filters)
+                    {
+                        var filteredCase = {};
+                        filteredCase.nodes = graph_data.nodes.filter(function (cif) {
+                            return ((new Date(cif.REPORT_DT)).getTime() >= filters[0].getTime() &&
+                                    (new Date(cif.REPORT_DT)).getTime() <= filters[1].getTime());
+                        });
+                        angular.copy(filteredCase, graph_data);
+                    }
+                }
+                $scope.cases = graph_data.nodes;
+                if ($scope.gridOptions.data == undefined) {
                     $scope.gridOptions.data = graph_data.nodes;
                 }
-//                else if ((graph_data.nodes.length) < ($scope.gridOptions.data.length))
-//                if (eventService.getSelCases().length < graph_data.nodes.length)
-//                {
-//                    angular.forEach(graph_data.nodes, function (graphdata, gindex) {
-//
-//                        for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-//                            if ($scope.gridOptions.data[i].dbid === graphdata.dbid) {
-//
-//                                if ($scope.gridApi != undefined)
-//                                    $scope.gridApi.suppressEvents($scope.rowSelectionChanged, function () {
-//                                        $scope.gridApi.selection.selectRow($scope.gridOptions.data[i]);
-//                                    });
-//
-//                            }
-//                        }
-//                        ;
-//
-//                    });
-//                }
+                else if ((graph_data.nodes.length) < ($scope.gridOptions.data.length))
+                {
+                    angular.forEach(graph_data.nodes, function (graphdata, gindex) {
+
+                        for (var i = 0; i < $scope.gridOptions.data.length; i++) {
+                            if ($scope.gridOptions.data[i].dbid === graphdata.dbid) {
+
+                                $scope.gridApi.suppressEvents($scope.rowSelectionChanged, function () {
+                                    $scope.gridApi.selection.selectRow($scope.gridOptions.data[i]);
+                                });
+
+                            }
+                        }
+                        ;
+
+                    });
+                }
             }
 
         }
@@ -255,61 +189,13 @@ angular.module('obiUiApp')
                     });
 
                     scope.$on('rightFilterUpdate', function (evt, filter) {
-                        scope.$evalAsync(attrs.updatefilter);
+                        scope.$evalAsync(attrs.select);
                     });
 
                     scope.$on('resetUI', function (evt, filter) {
                         scope.$evalAsync(attrs.resetui);
                     });
-
-
                 }
             };
-        })
-
-        .directive('uiGridSelectionSelectAllButtons', ['uiGridSelectionService',
-            function (uiGridSelectionService) {
-                return {
-                    replace: true,
-                    restrict: 'E',
-                    priority: 100,
-                    //     template: $templateCache.get('ui-grid/selectionSelectAllButtons'),
-                    //template :  "<div class=\"ui-grid-selection-row-header-buttons ui-grid-icon-ok\" ng-class=\"{'ui-grid-all-selected': grid.selection.selectAll}\" ng-click=\"headerButtonClick2($event)\">&nbsp;</div>",
-
-                    scope: true,
-                    link: function ($scope, $elm, $attrs, uiGridCtrl) {
-                        var self = $scope.col.grid;
-
-                        $scope.headerButtonClick = function (row, evt) {
-                            var selectedRows = uiGridSelectionService.getSelectedRows(self);
-                            if (selectedRows.length > 0) {
-//                                $scope.$evalAsync(function (self) {
-                                self.options.data.sort(function (a, b) {
-                                    var filteredCaseA = selectedRows.filter(function (cif) {
-
-                                        return (cif.entity.dbid === a.dbid);
-                                    });
-                                    var filteredCaseB = selectedRows.filter(function (cif) {
-                                        return (cif.entity.dbid === b.dbid);
-                                    });
-                                    if ((filteredCaseA.length > 0) && (a.dbid > b.dbid))
-                                        return b.dbid - a.dbid;
-                                    else if ((filteredCaseB.length > 0) && (a.dbid < b.dbid))
-                                        return b.dbid - a.dbid;
-                                    else
-                                        return    a.dbid - b.dbid;
-                                });
-                            }
-//                                )
-                            self.resetColumnSorting();
-                            self.options.useExternalSorting = true;
-                            self.api.core.raise.sortChanged(self, self.getColumnSorting());
-
-                        };
-                    }
-                };
-            }]);
-
-
-
+        });
 

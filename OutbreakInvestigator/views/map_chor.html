@@ -1,12 +1,6 @@
 <!-- ***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)****-->
 <!-- ***** http://faculty.washington.edu/neila/ ****-->
-<div  class="fill" ng-controller="ChoroplethCtrl">
-    <div class="info box">
-        <!--<div ng-show="selectedZip" class="flag" ></div>-->
-        Zip code: {{ selectedZip.properties.ZIPCODE || ''}} <br>
-        Number of cases: {{ numberCases || ''}}
-    </div>
-    <leaflet class="fill" leaflet-vis events="events" layers="layers" center="seattle" geojson="geojson"></leaflet>
-    
+<div class="fill" ng-controller="ChoroplethCtrl">
+    <leaflet class="fill" layers="layers" center="seattle" geojson="geojson"></leaflet>
 </div>
 

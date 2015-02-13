@@ -10,7 +10,7 @@ angular.module('obiUiApp')
         .directive('dotmapVis', function ($window, $document, $timeout, graphService, eventService, displayService) {
             return {
                 restrict: 'A',
-               // scope: {},
+                scope: {},
                 link: function (scope, elem, attrs) {
                     var uid = elem.uniqueId();
 

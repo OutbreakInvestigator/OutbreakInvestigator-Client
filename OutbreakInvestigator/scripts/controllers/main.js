@@ -3,21 +3,18 @@
 'use strict';
 
 angular.module('obiUiApp')
-        .directive('loading', function (eventService) {
+        .directive('loading', function () {
             return {
                 restrict: 'E',
                 replace: true,
                 template: '<div class="loading"><img src="http://www.nasa.gov/multimedia/videogallery/ajax-loader.gif" width="20" height="20" />LOADING...</div>',
                 link: function (scope, element, attr) {
                     scope.$watch('complete', function (val) {
-                        if (val()==false) {
+                        if (!val())
                             $(element).show();
-                        }
-                        else 
+                        else
                         {
                             $(element).hide();
-                            if(val()==true)
-                                eventService.rebroadcastResetUI();
                         }
                     });
                 }

@@ -11,7 +11,7 @@ angular.module('obiUiApp')
         .directive('networkWithFixedXVis', function ($window, $document, graphService, eventService, displayService) {
             return {
                 restrict: 'A',
-//                scope: {},
+                scope: {},
                 link: function (scope, elem, attrs) {
                     var uid = elem.uniqueId();
                     var graph_data;
