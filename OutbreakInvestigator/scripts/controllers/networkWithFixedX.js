@@ -8,10 +8,10 @@ angular.module('obiUiApp')
                 alert("Loading network");
             }
         })
-        .directive('networkWithFixedXVis', function ($window, $document, graphService, eventService, displayService) {
+        .directive('networkWithFixedXVis', function ($window, $document, graphService, eventService, displayService, timelineService, filterService) {
             return {
                 restrict: 'A',
-                scope: {},
+//                scope: {},
                 link: function (scope, elem, attrs) {
                     var uid = elem.uniqueId();
                     var graph_data;
@@ -56,6 +56,8 @@ angular.module('obiUiApp')
                     {
                         if (newVal)
                             update(newVal);
+
+                        updateAllFilters(getPosition(elem[0]));
                     });
 
                     scope.$on('resetUI', function (evt, filter) {
@@ -66,14 +68,17 @@ angular.module('obiUiApp')
 
                     scope.$on('leftFilterUpdate', function (evt, filter) {
                         if (getPosition(elem[0]) == "left")
-                            updateNetworkFilter(elem[0], filter);
+                            updateAllFilters(getPosition(elem[0]));
                     });
 
                     scope.$on('rightFilterUpdate', function (evt, filter) {
                         if (getPosition(elem[0]) == "right")
-                            updateNetworkFilter(elem[0], filter);
+                            updateAllFilters(getPosition(elem[0]));
                     });
-
+                    scope.$on('filterUpdate', function (evt, filter, value1, value2)
+                    {
+                        updateAllFilters(getPosition(elem[0]));
+                    });
                     scope.$on('selCasesUpdate', function (evt, selCases, requestModuleID)
                     {
                         if (requestModuleID != uid)
@@ -364,17 +369,12 @@ angular.module('obiUiApp')
                                 });
                     }
 
-                    function updateNetworkFilter(elem, filter)
+                    function updateNetworkFilter(filter, checkFn, timelineFilter)
                     {
                         if (filter)
                         {
-                            var svg = d3.select(elem).select("svg");
-                            svg.selectAll(".node").style("visibility", "visible"); // is this correct?
-                            svg.selectAll(".link").style("visibility", "visible"); // is this correct?
-
                             svg.selectAll(".node").filter(function (d) {
-                                var isHidden = (new Date(d.REPORT_DT)).getTime() < filter[0].getTime() ||
-                                        (new Date(d.REPORT_DT)).getTime() > filter[1].getTime();
+                                var isHidden = !checkFn(d, timelineFilter, filterService, filter);
                                 return isHidden;
                             }).each(function (d, i) {
                                 var associated_links = svg.selectAll(".link").filter(function (e) {
@@ -382,7 +382,40 @@ angular.module('obiUiApp')
                                 }).style("visibility", "hidden");
                             }).style("visibility", "hidden");
                         }
+                    }
 
+                    function updateAllFilters(timelineFilter)
+                    {
+                        //reset first
+                        var svg = d3.select(elem[0]).select("svg");
+                        svg.selectAll(".node").style("visibility", "visible"); // is this correct?
+                        svg.selectAll(".link").style("visibility", "visible"); // is this correct?
+
+                        if (timelineFilter)
+                        {
+                            updateNetworkFilter('time', filterService.filterTimeline, timelineFilter);
+                        }
+                        angular.forEach(filterService.getAllFilterData(), function(value, key) {
+    updateNetworkFilter(key, filterService.filter);
+}); 
+//                        if (filterService.isRange(filterService.getAge()))
+//                        {
+//                            updateNetworkFilter('age', filterService.filterAgeRange);
+//                        } else if (filterService.isList(filterService.getAge()))
+//                        {
+//                            updateNetworkFilter('age', filterService.filterAgeList);
+//                        }
+//                        if (filterService.isList(filterService.getGender()))
+//                        {
+//                            updateNetworkFilter('gender', filterService.filterGenderList);
+//                        } else if (filterService.isRange(filterService.getGender()))
+//                        {
+//                            updateNetworkFilter('gender', filterService.filterGenderRange);
+//                        }
+//                        if (filterService.isList(filterService.getDisease()))
+//                        {
+//                            updateNetworkFilter('disease', filterService.filterDiseaseList);
+//                        }
                     }
 
                     function updateCaseSelection(elem, inCases)

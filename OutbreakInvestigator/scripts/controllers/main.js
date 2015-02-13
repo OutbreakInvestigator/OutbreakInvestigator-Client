@@ -3,15 +3,16 @@
 'use strict';
 
 angular.module('obiUiApp')
-        .directive('loading', function () {
+        .directive('startHere', function (graphService) {
             return {
                 restrict: 'E',
                 replace: true,
-                template: '<div class="loading"><img src="http://www.nasa.gov/multimedia/videogallery/ajax-loader.gif" width="20" height="20" />LOADING...</div>',
+                template: '<div class="glyphicon glyphicon-chevron-right glyphicon-refresh-animate"></div>',
                 link: function (scope, element, attr) {
-                    scope.$watch('complete', function (val) {
-                        if (!val())
+                   scope.$watch(graphService.isLoadingComplete, function (val) {
+                        if (!val) {
                             $(element).show();
+                        }
                         else
                         {
                             $(element).hide();
@@ -20,7 +21,25 @@ angular.module('obiUiApp')
                 }
             }
         })
-        .controller('MainCtrl', function ($scope, $modal, $http, eventService, graphService) {
+        .directive('loading', function (eventService) {
+            return {
+                restrict: 'E',
+                replace: true,
+                template: '<div class="loading"><img src="http://www.nasa.gov/multimedia/videogallery/ajax-loader.gif" width="20" height="20" />LOADING...</div>',
+                link: function (scope, element, attr) {
+                    scope.$watch('complete', function (val) {
+                        if (val() == false) {
+                            $(element).show();
+                        }
+                        else
+                        {
+                            $(element).hide();
+                        }
+                    });
+                }
+            }
+        })
+        .controller('MainCtrl', function ($scope, $modal, $http, eventService, choroplethService, graphService, chartService) {
             $(document).ready(function () {
                 $('#ui-layout-container').layout({
                     center__paneSelector: ".outer-center"
@@ -58,75 +77,78 @@ angular.module('obiUiApp')
                                 // INNER-LAYOUT (child of middle-center-pane)
                         , center__childOptions: {
                             center__paneSelector: ".inner-center"
-                                    //,	west__paneSelector:		".inner-west"
-                            , east__paneSelector: ".inner-east"
-                            , center__size: '50%'
-                            , east__size: '50%'
+                            , west__paneSelector: ".inner-west"
+                            , west__size: '16%'
+                            , center__size: '84%'
                             , spacing_open: 8 // ALL panes
                             , spacing_closed: 8  // ALL panes
-                                    //,	west__spacing_closed:	12
-                                    //,	east__spacing_closed:	12
-
-                                    // content pane layout (child of inner-center)
                             , center__childOptions: {
-                                center__paneSelector: ".vis-panel"
-                                , north__paneSelector: ".button-panel"
-                                , north__maxSize: 90
-                                        //,	east__size:				'50%'
-                                , resizable: false
-                                , closable: false
-                                , spacing_open: 0 // ALL panes
-                            }
-                            , center__onresize_end: function (pane, $pane, state) {
-                                $scope.$broadcast('visPanelResize', ['left'], state.outerWidth, state.outerHeight);
+                                center__paneSelector: ".inner-vis-center"
+                                , east__paneSelector: ".inner-vis-east"
+                                , center__size: '50%'
+                                , east__size: '50%'
+                                , spacing_open: 8 // ALL panes
+                                , spacing_closed: 8  // ALL panes
+                                , center__childOptions: {
+                                    center__paneSelector: ".vis-panel"
+                                    , north__paneSelector: ".button-panel"
+                                    , north__maxSize: 90
+                                            //,	east__size:				'50%'
+                                    , resizable: false
+                                    , closable: false
+                                    , spacing_open: 0 // ALL panes
+                                }
+                                , center__onresize_end: function (pane, $pane, state) {
+                                    $scope.$broadcast('visPanelResize', ['left'], state.outerWidth, state.outerHeight);
+                                }
+
+                                /*
+                                 ,   center__onresize_start: function ( pane, $pane, state ){
+                                 console.log([
+                                 '-------------------------------------------'
+                                 ,   'onresize_start'
+                                 ,   'state.outerWidth = '+ state.outerWidth
+                                 ,   'state.newWidth   = '+ state.newWidth
+                                 ].join('\n'));
+                                 }
+                                 
+                                 ,  center__onresize_end: function ( pane, $pane, state ){
+                                 console.log([
+                                 '-------------------------------------------'
+                                 ,   'onresize_end'
+                                 ,   'state.outerWidth = '+ state.outerWidth
+                                 ,   'state.outerHeight = '+ state.outerHeight
+                                 ].join('\n'));
+                                 }
+                                 */
+
+                                // content pane layout (child of inner-east)
+                                , east__childOptions: {
+                                    center__paneSelector: ".vis-panel"
+                                    , north__paneSelector: ".button-panel"
+                                    , north__maxSize: 90
+                                            //,	east__size:				'50%'
+                                    , resizable: false
+                                    , closable: false
+                                    , spacing_open: 0 // ALL panes
+                                }
+                                , east__onresize_end: function (pane, $pane, state) {
+                                    $scope.$broadcast('visPanelResize', ['right'], state.outerWidth, state.outerHeight);
+                                }
                             }
 
                             /*
-                             ,   center__onresize_start: function ( pane, $pane, state ){
-                             console.log([
-                             '-------------------------------------------'
-                             ,   'onresize_start'
-                             ,   'state.outerWidth = '+ state.outerWidth
-                             ,   'state.newWidth   = '+ state.newWidth
-                             ].join('\n'));
-                             }
-                             
-                             ,  center__onresize_end: function ( pane, $pane, state ){
-                             console.log([
-                             '-------------------------------------------'
-                             ,   'onresize_end'
-                             ,   'state.outerWidth = '+ state.outerWidth
-                             ,   'state.outerHeight = '+ state.outerHeight
-                             ].join('\n'));
+                             // INNER-LAYOUT (child of middle-south-pane)
+                             ,	south__childOptions: {
+                             center__paneSelector:           ".timeline-panel"
+                             ,   north__paneSelector:        ".timeline-controls-panel"
+                             ,   north__maxSize:             40
+                             ,   resizable:              false
+                             ,   closable:               false
+                             ,	spacing_open:			0 // ALL panes
                              }
                              */
-
-                            // content pane layout (child of inner-east)
-                            , east__childOptions: {
-                                center__paneSelector: ".vis-panel"
-                                , north__paneSelector: ".button-panel"
-                                , north__maxSize: 90
-                                        //,	east__size:				'50%'
-                                , resizable: false
-                                , closable: false
-                                , spacing_open: 0 // ALL panes
-                            }
-                            , east__onresize_end: function (pane, $pane, state) {
-                                $scope.$broadcast('visPanelResize', ['right'], state.outerWidth, state.outerHeight);
-                            }
                         }
-
-                        /*
-                         // INNER-LAYOUT (child of middle-south-pane)
-                         ,	south__childOptions: {
-                         center__paneSelector:           ".timeline-panel"
-                         ,   north__paneSelector:        ".timeline-controls-panel"
-                         ,   north__maxSize:             40
-                         ,   resizable:              false
-                         ,   closable:               false
-                         ,	spacing_open:			0 // ALL panes
-                         }
-                         */
                     }
                 });
 
@@ -200,12 +222,12 @@ angular.module('obiUiApp')
                 });
             };
 
+            // reset UI
             $scope.reset = function () {
 
                 eventService.rebroadcastResetUI();
             };
 
-            // reset UI
             $scope.openAbout = function () {
 
                 var modalInstance = $modal.open({
@@ -228,7 +250,7 @@ angular.module('obiUiApp')
 
             $scope.data = {};
             $scope.loading = 0;
-            $scope.content = ["[Select Content]", "table", "network", "network fixed on time line", "map (dot)", "map (choropleth)"];
+            $scope.content = ["[Select Content]", "table", "network", "network new", "network fixed on time line", "map (dot)", "map (choropleth)", "barchart"];
 
             if ($scope.leftPanel == null)
             {
@@ -248,11 +270,27 @@ angular.module('obiUiApp')
                 $scope.rightPanel = item;
             };
 
+            var promise = $http.get('conf/charts.json')
+                    .
+                    success(function (data, status) {
+                        $scope.charts = data.allCharts.map(function (c) {
+                            return c.name;
+                        });
+
+                    }).
+                    error(function (data, status) {
+                        alert("failed to load charts config data");
+                    });
+
+            if ($scope.chartSelection === null)
+            {
+                $scope.chartSelection = $scope.charts[0];
+            }
 
         })
 
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, $http, graphService) {
+var ModalInstanceCtrl = function ($scope, $modalInstance, $http, graphService, eventService) {
     $scope.queries = graphService.getQueries();
     $scope.url = graphService.getQueryURL();
     $scope.complete = function () {

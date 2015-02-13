@@ -1,0 +1,25 @@
+{
+    "allCharts": [
+        {
+            "name": "Gender",
+            "data_field": "GENDER"
+
+        }, {
+            "name": "Zipcode",
+            "data_field": "ZIP"
+
+        },
+        {
+            "name": "Race",
+            "data_field": "RACE"
+        },
+        {
+            "name": "Age",
+            "data_field": "AGEYEARS"
+        },
+        {
+            "name": "Disease",
+            "data_field": "DISEASE_NAME"
+        }
+    ]
+}

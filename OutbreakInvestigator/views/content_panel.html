@@ -6,6 +6,7 @@
         <select id="combobox">
             <option value="">Select Content</option>
             <option value="network" ng-click="setLeft('network')">Network</option>
+            <option value="network new" ng-click="setLeft('network new')">Network New!</option>
              <option value="network fixed on time line" ng-click="setLeft('network fixed on time line')">Network fixed on time line</option>
             <option value="map (dot)" ng-click="setLeft('map (dot)')">Map (Dot)</option>
             <option value="map (choropleth)" ng-click="setLeft('map (choropleth)')">Map (Choropleth)</option>
@@ -16,6 +17,7 @@
 <div class="vis-panel">
     <div id="leftDotMapPanel" ng-include="'views/map_dot.html'" ng-show="leftPanel=='map (dot)'" ng-controller='DotmapCtrl' style='height:inherit'></div>
     <div ng-include="'views/network.html'"  ng-show="leftPanel=='network'" ng-controller='NetworkCtrl' style='height:inherit'></div>
+    <div ng-include="'views/network1.html'"  ng-show="leftPanel=='network new'" ng-controller='Network1Ctrl' style='height:inherit'></div>
     <div ng-include="'views/networkWithFixedX.html'"  ng-show="leftPanel=='network fixed on time line'" ng-controller='NetworkWithFixedXCtrl' style='height:inherit'></div>
     <div ng-include="'views/map_chlor.html'" ng-show="leftPanel=='map (choropleth)'" style='height:inherit'></div>
 </div>

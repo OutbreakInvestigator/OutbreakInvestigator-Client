@@ -1,6 +1,17 @@
 <!-- ***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)****-->
 <!-- ***** http://faculty.washington.edu/neila/ ****-->
-<div class="fill" ng-controller="ChoroplethCtrl">
-    <leaflet class="fill" layers="layers" center="seattle" geojson="geojson"></leaflet>
+<div  leaflet-vis reloadfilteredcases="reloadFilteredCases()" zoomend="zoomend()" viewreset="viewreset()" layeradd="layeradd()" class="fill" ng-controller="ChoroplethCtrl">
+      <div class="loading">
+  <img id="loading-image" src="images/ajax-loader.gif" alt="Loading..." />
+</div>
+    <div class="info box">
+        <!--<div ng-show="selectedZip" class="flag" ></div>-->
+        Zip code: {{ selectedZip.properties.ZIPCODE || ''}} <br>
+        Number of cases: {{ numberCases || ''}}
+    </div>
+    <leaflet class="fill" ng-attr-id="{{ 'leaflet-' + id}}"  events="events" layers="layers" center="seattle" geojson="geojson"></leaflet>
+    
+  
+    opacity
 </div>
 

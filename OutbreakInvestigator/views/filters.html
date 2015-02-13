@@ -1,0 +1,110 @@
+<!-- ***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)****-->
+<!-- ***** http://faculty.washington.edu/neila/ ****-->
+<div class="fill"  ng-controller="FiltersCtrl"    >
+    <div class="fill panel panel-default" style="overflow: auto;">
+        <div class="ui-widget button-panel">
+        <label>Filters: </label>
+        </div>
+        <!--<div class="panel-body">-->
+
+        <!--            <div class="input-group">
+                        <span class="input-group-addon"  >Zip code: </span>
+                        <input   class="form-control" placeholder="" input-check  ng-model="zipcode"   
+                                 required >
+                        data-wc-unique="{key: zipcode, property: 'zipcode'}"
+                    </div>-->
+
+        <!--</div>-->
+        <!--        <div class="panel-body">
+        
+                    <div class="input-group">
+                        <span class="input-group-addon"  >Age: </span>
+                         
+                        <input type="text"  class="form-control" id="age" readonly  
+                               placeholder="0 - 100" input-check  ng-model="age"  ng-change="updatefilter($event)" 
+                               required>
+                        <div id="slider-range"></div>
+                        
+                    </div>
+                </div>-->
+        <!--
+                <div class="panel-body">
+                    <div class="btn-group btn-group" >
+                        <label   class="btn btn-primary" ng-model="gender" gender-check ng-change="updatefilter($event)" btn-radio="'Both'"  >
+                            Both
+                        </label>
+                        <label   class="btn btn-primary" ng-model="gender" gender-check ng-change="updatefilter($event)" btn-radio="'Male'"  >
+                            Male
+                        </label>
+                        <label   class="btn btn-primary" ng-model="gender" gender-check ng-change="updatefilter($event)" btn-radio="'Female'"  >
+                            Female
+                        </label>
+                    </div>
+                </div>-->
+
+
+        <div class="panel-body input-group">
+            <select class="selectCss" ng-model="myFilter" ng-options="f for f in customFilter.getAvailableFilters()"  >
+            </select>
+            <span class="input-group-btn" style='padding-left: 5px'>
+                <button class="btn btn-default" ng-click="addItem()" ng-disabled="!loaded()" ><i class="glyphicon glyphicon-plus" ></i></button>
+            </span>
+
+        </div>
+
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="item in  customFilter.getFilters()" >
+                <div class="input-filter"  ng-attr-id="{{ 'filter-' + item.title + '-multiselect'}}">
+                    <div class="input-group" >   
+                        <span class="input-group-addon"  >{{item.title}} </span>  
+                        <ui-select multiple on-select="changeSelection($index,$item)" on-remove="changeSelection($index)"  ng-model="multiSelect.data[$index]" theme='select2'  ng-disabled="disabled" style="width: 100%;">
+                            <ui-select-match placeholder="{{ 'Select ' + item.title + ' ...'}}">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="item in customFilter.getAvailableSelectItems(item.title) | filter:$select.search">
+                                {{item}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
+                </div> 
+
+                <div class="input-filter"  ng-attr-id="{{ 'filter-' + item.title + '-text'}}">
+                    <div class="input-group" >   
+                        <span class="input-group-addon"  >{{item.title}} </span>  
+                        <input   class="form-control" placeholder="" input-check  ng-model="filterValue"  required >                 
+                    </div> 
+                </div> 
+                <div class="input-filter"   ng-attr-id="{{ 'filter-' + item.title + '-slider'}}">
+                    <div class="input-group"  >
+                        <span class="input-group-addon"  >{{item.title}} </span> 
+                        <input type="text"  class="form-control" ng-attr-id="{{ 'filter-' + item.title}}" readonly  
+                               placeholder="0 - 100" input-check  ng-model="filterValue"  ng-change="updatefilter($event)" 
+                               required>
+                        <div ng-attr-id="{{ 'filter-' + item.title + '-range'}}"></div>
+                    </div>
+                </div> 
+                <div class="input-filter"  ng-attr-id="{{ 'filter-' + item.title + '-radio'}}">
+                    <div class="input-group" >   
+                        <span class="input-group-addon"  >{{item.title}} </span>  
+                        <buttons-radio class="btn-group"    data-toggle="buttons-radio"  model='filterValue' options='radioFilters'></buttons-radio>
+                    </div>
+                </div> 
+
+                <a title="Multi-select" ng-click="toggleMultiSelect(item.title, $index)"><i class="glyphicon glyphicon-list-alt" style='padding-top: 5px'></i></a>
+                <a title="Radio Buttons" ng-click="toggleRadio(item.title, $index)"><i class="glyphicon glyphicon-th-large" style='padding-top: 5px'></i></a>
+                <a title="Range Slider" ng-click="toggleSlider(item.title, $index)"><i class="glyphicon glyphicon-resize-horizontal" style='padding-top: 5px'></i></a>
+                <a title="Delete" ng-click="deleteItem(item.title, $index)"><i class="glyphicon glyphicon-trash" style='padding-top: 5px;float: right;'></i></a>
+           <div class="alert alert-danger" role="alert" ng-attr-id="{{ 'filter-' + item.title + '-message'}}" style="display: none;">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" ></span>
+  <!--<span class="sr-only" ></span>--> 
+                </div>
+                
+                 </li>
+        </ul> 
+        <!--        <div class="info box">
+                    len:  {{filters[0]}}
+                </div>-->
+
+    </div>
+
+
+</div>

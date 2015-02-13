@@ -7,10 +7,10 @@ angular.module('obiUiApp')
             $scope.getGraph = graphService.getGraph;
 
         })
-        .directive('dotmapVis', function ($window, $document, $timeout, graphService, eventService, displayService) {
+        .directive('dotmapVis', function ($window, $document, $timeout, graphService, eventService, displayService, filterService, timelineService) {
             return {
                 restrict: 'A',
-                scope: {},
+                // scope: {},
                 link: function (scope, elem, attrs) {
                     var uid = elem.uniqueId();
 
@@ -21,16 +21,21 @@ angular.module('obiUiApp')
                     scope.$on('leftFilterUpdate', function (evt, filter) {
                         if (getPosition(elem[0]) == "left")
                         {
-                            updateMapFilter(filter);
+                            updateAllFilters(getPosition(elem[0]));
                         }
+
                     });
                     scope.$on('rightFilterUpdate', function (evt, filter) {
                         if (getPosition(elem[0]) == "right")
                         {
-                            updateMapFilter(filter);
+                            updateAllFilters(getPosition(elem[0]));
                         }
-                    });
 
+                    });
+                    scope.$on('filterUpdate', function (evt, filter, value1, value2)
+                    {//getPosition(elem[0]) === eventService.getFilterSel()
+                        updateAllFilters(getPosition(elem[0]));
+                    });
                     scope.$on('selCasesUpdate', function (evt, selCases, requestModuleID)
                     {
                         if (requestModuleID != uid)
@@ -140,15 +145,25 @@ angular.module('obiUiApp')
                         markerBounds.extend(latlng);
 
                         marker.infowindow = new google.maps.InfoWindow({
-                            content: createInfoWindowText(element)
+                            content: createInfoWindowText(element),
+                            disableAutoPan: true
                         });
 
                         google.maps.event.addListener(marker, 'click', function (event) {
                             var ui_mode = eventService.getUIMode();
                             if (ui_mode == 'select')
                             {
-                                setSelected([marker.case]);
-                                eventService.setSelCases([marker.case], uid);
+                                var selCases = eventService.getSelCases();
+                                if (selCases.length === 1 && selCases[0].dbid === marker.case.dbid)
+                                {
+                                    setSelected([]);
+                                    eventService.setSelCases([], uid);
+                                }
+                                else
+                                {
+                                    setSelected([marker.case]);
+                                    eventService.setSelCases([marker.case], uid);
+                                }
                             }
                             else if (ui_mode == 'information')
                             {
@@ -193,7 +208,7 @@ angular.module('obiUiApp')
                          { "id": "#11:1170", "dbid": 1171, "DOB": "Sun Apr 05 00:00:00 PST 1953", "ONSET_DT": "Sat Dec 19 00:00:00 PST 2009", "FIRST_NM": "756", "HOSPITALIZED": 2, "TYPEDX": 1, "SUSPECTED_EXP": 6, "CDAYCARE": 2, "ZIP": "98057-0000", "ADDRESS1": "710", "INTERP": 2, "OTHERCONTACT_FIRST_NAME": "843", "INVESTIGATION_START_DT": "Tue Jan 05 00:00:00 PST 2010", "DISEASE": "PER", "FOODHANDLER": 2, "HOME_PHONE": "206-555-0710", "EXPIRED": 2, "WORK_PHONE": "206-555-0306-00", "CLUSTER_ID": 6, "LNG": -122.3008259, "OTHERCONTACT_LAST_NAME": "843", "IMMUNE_STATUS": 1, "REPORTED_BY": "CIT", "DISEASE_NAME": "PER", "PDAYCARE": 2, "CITY": "Skykomish", "BATCH_DT": "Sun Jan 03 00:00:00 PST 2010", "RACE": 3, "HOMELESS": 8, "ZIPCODE4": "98057-0000", "STATE": "WA", "COUNTY": 17, "EXPOSED_IN_KC": 1, "SEX": 1, "LAST_NM": "175", "PAT_CARE": 2, "REPORT_DT": "Tue Dec 29 00:00:00 PST 2009", "LAT": 47.7336519, "IMMUNE_NU": 1, "AGEYEARS": 60, "_id": "#11:1170", "_type": "vertex" }
                          */
 
-                        var infoText = '<div class="map-info-window">';
+                        var infoText = '';
                         for (var i = 0; i < caseInfoFields.length; i++)
                         {
                             var currField = caseInfoFields[i];
@@ -212,8 +227,21 @@ angular.module('obiUiApp')
                                 infoText += "<br/>";
                             }
                         }
+                        // Create temporary div off to the side, containing infotext, just to get the size dynamically
+                        var $cloneInfotext = $('<div>' + infoText + '</div>')
+                                .css({marginLeft: '-9999px', position: 'absolute'})
+                                .appendTo($('body'));
 
-                        return '</div>' + infoText;
+
+                        var infoWindowText = '<div style="width: ' + ($cloneInfotext.width() + 10) + 'px; ' +
+                                'height: ' + ($cloneInfotext.height()) + 'px">' + infoText +
+                                '</div>';
+
+                        // Delete the temporary div:
+                        $cloneInfotext.remove();
+
+                        return infoWindowText;
+
                     }
 
                     var rect
@@ -262,7 +290,7 @@ angular.module('obiUiApp')
                             rebuildMap();
                         });
 
-                        google.maps.event.addListener(scope.map,  'click', function () {
+                        google.maps.event.addListener(scope.map, 'click', function () {
                             prepareForSelect(eventService.getUIMode());
                         });
 
@@ -342,7 +370,7 @@ angular.module('obiUiApp')
                         setSelected(eventService.getSelCases());
                     }
 
-                    function updateMapFilter(filter)
+                    function updateMapFilter(filter, checkFn, timelineFilter)
                     {
                         if (filter)
                         {
@@ -351,17 +379,88 @@ angular.module('obiUiApp')
                             for (var i = 0; i < markerArray.length; i++)
                             {
                                 var marker = markerArray[i];
-                                if ((new Date(marker.case.REPORT_DT)).getTime() < filter[0].getTime() ||
-                                        (new Date(marker.case.REPORT_DT)).getTime() > filter[1].getTime())
-                                {
-                                    marker.setVisible(false);
-                                }
-                                else
-                                {
-                                    marker.setVisible(true);
-                                }
+                                if (marker.visible)
+                                    marker.setVisible(checkFn(marker.case, timelineFilter, filterService, filter));
                             }
                         }
+                    }
+                    function updateAllFilters(timelineFilter)
+                    {
+                        //reset first
+                        markerArray.forEach(function (marker) {
+                            marker.setVisible(true);
+                        });
+
+                        if (timelineFilter)
+                        {
+                            updateMapFilter('time', filterService.filterTimeline, timelineFilter);
+
+//                            var timeline = timelineService.getTimeline();
+//                            if (timeline)
+//                            {
+//                                updateMapFilter('time', function (markerCase) {
+////                                    var filters = timelineService.getTimeline().filters()[0];
+//                                    var filters;
+//                                    if (filterTimeline === 'left')
+//                                        filters = eventService.getLeftFilter();
+//                                    if (filterTimeline === 'right')
+//                                        filters = eventService.getRightFilter();
+//                                    if (filterTimeline === 'linked')
+//                                        filters = timeline.filters()[0];
+//                                    if (filters)
+//                                    {
+//                                        return (new Date(markerCase.REPORT_DT)).getTime() >= filters[0].getTime() &&
+//                                                (new Date(markerCase.REPORT_DT)).getTime() <= filters[1].getTime();
+//                                    }
+//                                    return true;
+//                                });
+//                            }
+                        }
+                        angular.forEach(filterService.getAllFilterData(), function (value, key) {
+                            updateMapFilter(key, filterService.filter);
+                        });
+//                        updateMapFilter('age', filterService.filterAge);
+//                        if (filterService.isRange(filterService.getAge()))
+//                        {
+//                            updateMapFilter('age', filterService.filterAgeRange);
+//                        } else if (filterService.isList(filterService.getAge()))
+//                        {
+//                            updateMapFilter('age', filterService.filterAgeList);
+//                        }
+//                        updateMapFilter('gender', filterService.filterGender);
+//                        if (filterService.isList(filterService.getGender()))
+//                        {
+//                            updateMapFilter('gender', filterService.filterGenderList);
+//                        } else if (filterService.isRange(filterService.getGender()))
+//                        {
+//                            updateMapFilter('gender', filterService.filterGenderRange);
+//                        }
+//updateMapFilter('disease', filterService.filterDisease);
+//                        if (filterService.isList(filterService.getDisease()))
+//                        {
+//                            updateMapFilter('disease', filterService.filterDiseaseList);
+//                        }
+
+//                        if (filterService.getAgeFrom() !== undefined)
+//                        {
+//                            updateMapFilter('age', function (marker) {
+//                                return   marker.case.AGEYEARS >= filterService.getAgeFrom() && marker.case.AGEYEARS <= filterService.getAgeTo();
+//                            });
+//                        }
+//                        if (filterService.getGender() !== undefined)
+//                        {
+//                            updateMapFilter('gender', function (marker)
+//                            {
+//                                return filterService.getGender() == 0 || marker.case.SEX == filterService.getGender();
+//                            });
+//                        }
+//                        if (filterService.getDisease() !== undefined)
+//                        {
+//                            updateMapFilter('disease', function (marker)
+//                            {
+//                                return $.inArray(marker.case.DISEASE_NAME, filterService.getDisease()) >= 0;
+//                            });
+//                        }
                     }
 
                     function isSelected(selCases, currCase)

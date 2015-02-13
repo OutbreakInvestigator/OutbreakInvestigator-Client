@@ -39,7 +39,11 @@ html, body, .container{
     border-left:	0;
     border-right:	0;
 }
-.inner-center, .inner-east {
+ .inner-west, .inner-center, .inner-east {
+    border:		0px solid #BBB;
+}
+
+.inner-vis-center,   .inner-vis-east {
     border:		1px solid #BBB;
 }
 
@@ -147,7 +151,7 @@ svg {
     padding: 0px 5px 0px 5px;
 }
 
-.button-panel {
+.button-panel .vis-select-panel{
     border-width: 0;
 }
 
@@ -205,6 +209,66 @@ line.link {
 }
 
 .map-info-window {
-    width:150px;
-    height:80px;
+/*    width:150px;
+    height:170px;*/
+maxHeight: 500px;
+maxWidth: 320px;
+/* overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;*/
 }
+
+.glyphicon-refresh-animate {
+   //float: right;
+    width: 130px;
+    -animation: slide 1.5s infinite linear;
+    -webkit-animation: slide2 1.5s infinite linear;
+    -moz-animation: slide3 1.5s infinite linear;
+ -ms-animation: slide4 1.5s infinite linear;
+}
+
+@-webkit-keyframes slide2 {
+ from {  left:0px; top:0px;}
+    to {  left:100px; top:0px;}
+     
+       0%   {font-size:10px; left:0px; top:0px;opacity: 0;}
+    25%  {font-size:15px; left:25px; top:0px;}
+     50%  {font-size:20px; left:50px; top:0px;}
+     75%  {font-size:25px; left:75px; top:0px;} 
+     100% {font-size:30px; left:100px; top:0px;opacity: 1;}
+}
+
+
+@-moz-keyframes slide3 {
+ from {  left:0px; top:0px;}
+    to {  left:100px; top:0px;}
+     
+       0%   {font-size:10px; left:0px; top:0px;opacity: 0;}
+    25%  {font-size:15px; left:25px; top:0px;}
+     50%  {font-size:20px; left:50px; top:0px;}
+     75%  {font-size:25px; left:75px; top:0px;} 
+     100% {font-size:30px; left:100px; top:0px;opacity: 1;}
+}
+
+@keyframes slide {
+    from {  left:0px; top:0px;}
+    to {  left:100px; top:0px;}
+     
+       0%   {font-size:10px; left:0px; top:0px;opacity: 0;}
+    25%  {font-size:15px; left:25px; top:0px;}
+     50%  {font-size:20px; left:50px; top:0px;}
+     75%  {font-size:25px; left:75px; top:0px;} 
+     100% {font-size:30px; left:100px; top:0px;opacity: 1;} 
+}
+
+@keyframes slide4 {
+    from {  left:0px; top:0px;}
+    to {  left:100px; top:0px;}
+     
+       0%   {font-size:10px; left:0px; top:0px;opacity: 0;}
+    25%  {font-size:15px; left:25px; top:0px;}
+     50%  {font-size:20px; left:50px; top:0px;}
+     75%  {font-size:25px; left:75px; top:0px;} 
+     100% {font-size:30px; left:100px; top:0px;opacity: 1;} 
+}
+

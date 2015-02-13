@@ -67,9 +67,9 @@ angular.module('obiUiApp')
                         var dateGroup = dateDimension.group().reduceCount();
 
                         var minDate = new Date(dateDimension.bottom(1)[0].REPORT_DT);
-                        minDate.setHours(minDate.getHours() - 3);
+                        minDate.setHours(minDate.getHours() - 24);
                         var maxDate = new Date(dateDimension.top(1)[0].REPORT_DT);
-                        maxDate.setHours(maxDate.getHours() + 3);
+                        maxDate.setHours(maxDate.getHours() + 24);
 
                         chart
                                 .width(elem.width())
@@ -101,10 +101,15 @@ angular.module('obiUiApp')
                         {
                             if (filter != null)
                             {
-                                console.log("filter min " + filter[0]);
-                                console.log("filter max " + filter[1]);
+//                                console.log("filter min " + filter[0]);
+//                                console.log("filter max " + filter[1]);
                                 eventService.setFilter(filter);
                             }
+                        });
+
+                        chart.on("postRedraw", function (chart, filter)
+                        {
+                            eventService.setFilterEnd();
                         });
 
                         chart.on("zoomed", function (chart, filter)

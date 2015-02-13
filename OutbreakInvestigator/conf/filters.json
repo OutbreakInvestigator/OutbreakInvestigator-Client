@@ -1,0 +1,36 @@
+{
+    "allFilters": [
+        {
+            "name": "zipcode",
+            "data_field": "ZIP",
+            "type": "multiselect"
+
+        },
+        {
+            "name": "gender",
+            "data_field": "GENDER",
+            "type": "radio"
+
+        },{
+            "name": "race",
+            "data_field": "RACE",
+            "type": "multiselect"
+
+        },
+        {
+            "name": "age",
+            "data_field": "AGEYEARS",
+            "type": "slider"
+        },
+        {
+            "name": "disease",
+            "data_field": "DISEASE_NAME",
+            "type": "multiselect"
+        },
+        {
+            "name": "reported_by",
+            "data_field": "REPORTED_BY",
+             "type": "multiselect"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+ 
+.chart-title {
+    text-align: center; 
+    padding: .25em;
+    font-size: 18px;
+
+}
+.dc-legend {
+    font-size: 9px;
+}

@@ -42,12 +42,12 @@ angular.module('obiUiApp')
                     left_filter = inFilter;
                     $rootScope.$broadcast('leftFilterUpdate', left_filter);
                 }
-                else if(currFilterSel=="rightFilterSel")
+                else if(currFilterSel==="rightFilterSel")
                 {
                     right_filter = inFilter;
                     $rootScope.$broadcast('rightFilterUpdate', right_filter);
                 }
-                else if(currFilterSel=="linkedFilterSel")
+                else if(currFilterSel==="linkedFilterSel")
                 {
                     left_filter = inFilter;
                     $rootScope.$broadcast('leftFilterUpdate', left_filter);
@@ -55,6 +55,30 @@ angular.module('obiUiApp')
                     $rootScope.$broadcast('rightFilterUpdate', right_filter);
                 }
                 //rebroadcastFilters();
+            },
+            setFilterEnd: function () {
+                if(currFilterSel=="leftFilterSel")
+                {
+                    $rootScope.$broadcast('leftFilterEndUpdate', left_filter);
+                }
+                else if(currFilterSel=="rightFilterSel")
+                {
+                    $rootScope.$broadcast('rightFilterEndUpdate', right_filter);
+                }
+                else if(currFilterSel=="linkedFilterSel")
+                {
+                    $rootScope.$broadcast('leftFilterEndUpdate', left_filter);
+                    $rootScope.$broadcast('rightFilterEndUpdate', right_filter);
+                }
+            },
+            getFilterSel: function()
+            {
+                if (currFilterSel==='rightFilterSel')
+                    return 'right';
+                 if (currFilterSel==='leftFilterSel')
+                    return 'left';
+                if (currFilterSel==='linkedFilterSel')
+                    return 'linked';
             },
             setFilterSel: function (inFilterSel) {
                 var returnFilter;
@@ -114,6 +138,14 @@ angular.module('obiUiApp')
                 console.log('resetting');
                 selCases = [];
                 $rootScope.$broadcast('resetUI');
+            },
+            rebroadcastFilterUpdate: function(filter,value1, value2)
+            {
+                $rootScope.$broadcast('filterUpdate',filter,value1, value2);
+            },
+            rebroadcastSelZipcodes: function(zipcodes, requestModuleID)
+            {
+                $rootScope.$broadcast('selZipcodesUpdate',zipcodes,requestModuleID);
             }
         };
     });

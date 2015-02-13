@@ -9,6 +9,26 @@
             "display_text": "Age (years)"
         },
         {
+            "data_field": "GENDER",
+            "display_text": "Gender"
+        },
+        {
+            "data_field": "RACE",
+            "display_text": "race"
+        },
+        {
+            "data_field": "DISEASE_NAME",
+            "display_text": "Case type"
+        },
+        {
+            "data_field": "IMMUNE_STATUS",
+            "display_text": "Immune status"
+        },
+        {
+            "data_field": "REPORTED_BY",
+            "display_text": "Reported by"
+        },
+        {
             "data_field": "ONSET_DT",
             "display_text": "Date (onset)",
             "type": "date"
@@ -20,29 +40,48 @@
         }
     ],
     "case_info_grid": [
-        
         {
             "name": "dbid",
             "displayName": "ID",
-            "type":"number",
-              "sort": {
+            "type": "number",
+            "sort": {
                 "direction": "asc",
-                        "priority": "1"
-                }
+                "priority": "1"
+            }
         },
         {
             "name": "AGEYEARS",
             "displayName": "Age (years)"
         },
         {
+            "name": "GENDER",
+            "displayName": "Gender"
+        },
+        {
+            "name": "RACE",
+            "displayName": "race"
+        },
+        {
+            "name": "DISEASE_NAME",
+            "displayName": "Case type"
+        },
+        {
+            "name": "IMMUNE_STATUS",
+            "displayName": "Immune status"
+        },
+        {
+            "name": "REPORTED_BY",
+            "displayName": "Reported by"
+        },
+        {
             "name": "ONSET_DT",
             "displayName": "Date (onset)",
-            "type" : "date" 
+            "type": "date"
         },
         {
             "name": "REPORT_DT",
             "displayName": "Date (report)",
-            "type" : "date" 
+            "type": "date"
         }
     ]
 }

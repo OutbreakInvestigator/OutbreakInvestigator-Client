@@ -1,11 +1,16 @@
 <!-- ***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)****-->
 <!-- ***** http://faculty.washington.edu/neila/ ****-->
 <div class="outer-north">
-    <div id="toolbar" class="ui-widget-header ui-corner-all pull-right">
-        <button id="fetch">Update</button>
+    <div class="pull-right">
+        <table>
+    <tr>
+        <td><start-here></start-here>  </td>
+        <td>  <div id="toolbar" class="ui-widget-header ui-corner-all ">
+        
+        <button id="fetch">Query</button>
         <button id="reset">Reset</button>
         <button id="about">About</button>
-        <button id="contact">Contact</button>
+        <!--<button id="contact">Contact</button>-->
         <span style="margin:1em"></span>
         <div class="btn-group">
             <label id="select-pointer" class="btn btn-primary" ng-model="mode" btn-radio="'select'" >
@@ -18,6 +23,11 @@
                 <span class="glyphicon glyphicon-move"></span>
             </label>
         </div>
+    </div></td>
+    </tr>
+</table>
+    
+  
     </div>
     <img src="./images/logo.png" class="logo-img"/><h3 id="logo-text">Outbreak Investigator</h3>
 </div>
@@ -25,78 +35,104 @@
 <div class="outer-center">
 
     <div class="middle-center">
+        <div class="inner-west">
+
+
+            <div class="vis-panel fill"  pos="left">
+                <div   class="fill">
+                   
+                    <div ng-include="'views/filters.html'"  class="fill">
+                         
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <div class="inner-center">
-            <div class="button-panel">
-                <div class="ui-widget">
-                    <label>Visualisation: </label>
-                    <select ng-model="leftPanel" ng-options="vis for vis in content"/>
+            <div class="inner-vis-center">
+                <div class="button-panel">
+                    <div class="ui-widget vis-select-panel">
+                        <label>Visualisation: </label>
+                        <select ng-model="leftPanel" ng-options="vis for vis in content"/>
+                        
+                    </div>
+                   
+                </div>
+
+                <div class="vis-panel fill" ng-switch on="leftPanel" pos="left">
+                    <div ng-switch-when="table" class="fill">
+                        <div ng-include="'views/case_table.html'"  class="fill"/>
+                    </div>
+                    <div ng-switch-when="network" class="fill">
+                        <div ng-include="'views/network.html'"   class="fill"/>
+                    </div>
+                    <div ng-switch-when="network new" class="fill">
+                        <div ng-include="'views/network1.html'"   class="fill"/>
+                    </div>
+                    <div ng-switch-when="network fixed on time line" class="fill">
+                        <div ng-include="'views/networkWithFixedX.html'"  class="fill"/>
+                    </div> 
+                    <div ng-switch-when="map (dot)" class="fill">
+                        <div id="leftDotMapPanel" ng-include="'views/map_dot.html'" class="fill"/>
+                    </div>
+                    <div ng-switch-when="map (choropleth)" class="fill">
+                        <div ng-include="'views/map_chor.html'"   class="fill"/>
+                    </div>
+                    <div ng-switch-when="barchart" class="fill">
+                        <div ng-include="'views/barchart.html'"   class="fill"/>
+                    </div>
                 </div>
             </div>
 
-            <div class="vis-panel fill" ng-switch on="leftPanel" pos="left">
-                <div ng-switch-when="table" class="fill">
-                    <div ng-include="'views/case_table.html'" ng-controller='CaseTableCtrl' class="fill"/>
+            <div class="inner-vis-east">
+                <div class="button-panel">
+                    <div class="ui-widget">
+                        <label>Visualisation: </label>
+                        <select ng-model="rightPanel" ng-options="vis for vis in content"/>
+                    </div>
                 </div>
-                <div ng-switch-when="network" class="fill">
-                    <div ng-include="'views/network.html'" ng-controller='NetworkCtrl' class="fill"/>
-                </div>
-                <div ng-switch-when="network fixed on time line" class="fill">
-                    <div ng-include="'views/networkWithFixedX.html'" ng-controller='NetworkWithFixedXCtrl' class="fill"/>
-                </div> 
-                <div ng-switch-when="map (dot)" class="fill">
-                    <div id="leftDotMapPanel" ng-include="'views/map_dot.html'" ng-controller='DotmapCtrl' class="fill"/>
-                </div>
-                <div ng-switch-when="map (choropleth)" class="fill">
-                    <div ng-include="'views/map_chor.html'" ng-controller='ChoroplethCtrl' class="fill"/>
+
+                <div class="vis-panel fill" ng-switch on="rightPanel" pos="right">
+                    <div ng-switch-when="table" class="fill">
+                        <div ng-include="'views/case_table.html'" class="fill"/>
+                    </div>
+                    <div ng-switch-when="network" class="fill">
+                        <div ng-include="'views/network.html'"  class="fill"/>
+                    </div>
+                    <div ng-switch-when="network new" class="fill">
+                        <div ng-include="'views/network1.html'"   class="fill"/>
+                    </div>
+                    <div ng-switch-when="network fixed on time line" class="fill">
+                        <div ng-include="'views/networkWithFixedX.html'"  class="fill"/>
+                    </div> 
+                    <div ng-switch-when="map (dot)" class="fill">
+                        <div id="rightDotMapPanel" ng-include="'views/map_dot.html'"  class="fill"/>
+                    </div>
+                    <div ng-switch-when="map (choropleth)" class="fill">
+                        <div ng-include="'views/map_chor.html'" class="fill"/>
+                    </div>
+                    <div ng-switch-when="barchart" class="fill">
+                        <div ng-include="'views/barchart.html'"   class="fill"/>
+                    </div>
                 </div>
             </div>
-
         </div>
-
-        <div class="inner-east">
-            <div class="button-panel">
-                <div class="ui-widget">
-                    <label>Visualisation: </label>
-                    <select ng-model="rightPanel" ng-options="vis for vis in content"/>
-                </div>
-            </div>
-
-            <div class="vis-panel fill" ng-switch on="rightPanel" pos="right">
-                <div ng-switch-when="table" class="fill">
-                    <div ng-include="'views/case_table.html'" ng-controller='CaseTableCtrl' class="fill"/>
-                </div>
-                <div ng-switch-when="network" class="fill">
-                    <div ng-include="'views/network.html'" ng-controller='NetworkCtrl' class="fill"/>
-                </div>
-                <div ng-switch-when="network fixed on time line" class="fill">
-                    <div ng-include="'views/networkWithFixedX.html'" ng-controller='NetworkWithFixedXCtrl' class="fill"/>
-                </div> 
-                <div ng-switch-when="map (dot)" class="fill">
-                    <div id="rightDotMapPanel" ng-include="'views/map_dot.html'" ng-controller='DotmapCtrl' class="fill"/>
-                </div>
-                <div ng-switch-when="map (choropleth)" class="fill">
-                    <div ng-include="'views/map_chor.html'" ng-controller='ChoroplethCtrl' class="fill"/>
-                </div>
-            </div>
-        </div>
-
+        <!--
+        <div class="middle-west">Middle West</div>
+        <div class="middle-east">Middle East</div>
+        -->
     </div>
-    <!--
-    <div class="middle-west">Middle West</div>
-    <div class="middle-east">Middle East</div>
-    -->
-
     <div class="middle-south">
         <div id="timeline-placeholder" ng-include="'views/timeline.html'"  ng-controller='TimelineCtrl' class="fill"/>
     </div>
 
+
+
+    <!--
+    <div class="outer-west">Outer West</div>
+    <div class="outer-east">Outer East</div>
+    -->
 </div>
-
-<!--
-<div class="outer-west">Outer West</div>
-<div class="outer-east">Outer East</div>
--->
-
 
 <div class="outer-south"><p id="copyright-text">&copy;2014 University of Washington</p></div>
