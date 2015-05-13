@@ -3,31 +3,31 @@
 <div class="outer-north">
     <div class="pull-right">
         <table>
-    <tr>
-        <td><start-here></start-here>  </td>
-        <td>  <div id="toolbar" class="ui-widget-header ui-corner-all ">
-        
-        <button id="fetch">Query</button>
-        <button id="reset">Reset</button>
-        <button id="about">About</button>
-        <!--<button id="contact">Contact</button>-->
-        <span style="margin:1em"></span>
-        <div class="btn-group">
-            <label id="select-pointer" class="btn btn-primary" ng-model="mode" btn-radio="'select'" >
-                <span class="glyphicon glyphicon-hand-left"></span>
-            </label>
-            <label id="select-area" class="btn btn-primary" ng-model="mode" btn-radio="'multiselect'" >
-                <span class="glyphicon glyphicon-hand-left"></span><sup> +</sup>
-            </label>
-            <label id="manipulate" class="btn btn-primary" ng-model="mode" btn-radio="'manipulate'" >
-                <span class="glyphicon glyphicon-move"></span>
-            </label>
-        </div>
-    </div></td>
-    </tr>
-</table>
-    
-  
+            <tr>
+                <td><start-here></start-here>  </td>
+            <td>  <div id="toolbar" class="ui-widget-header ui-corner-all ">
+
+                    <button id="fetch">Query</button>
+                    <button id="reset">Reset</button>
+                    <button id="about">About</button>
+                    <!--<button id="contact">Contact</button>-->
+                    <span style="margin:1em"></span>
+                    <div class="btn-group">
+                        <label id="select-pointer" class="btn btn-primary" ng-model="mode" btn-radio="'select'" >
+                            <span class="glyphicon glyphicon-hand-left"></span>
+                        </label>
+                        <label id="select-area" class="btn btn-primary" ng-model="mode" btn-radio="'multiselect'" >
+                            <span class="glyphicon glyphicon-hand-left"></span><sup> +</sup>
+                        </label>
+                        <label id="manipulate" class="btn btn-primary" ng-model="mode" btn-radio="'manipulate'" >
+                            <span class="glyphicon glyphicon-move"></span>
+                        </label>
+                    </div>
+                </div></td>
+            </tr>
+        </table>
+
+
     </div>
     <img src="./images/logo.png" class="logo-img"/><h3 id="logo-text">Outbreak Investigator</h3>
 </div>
@@ -40,9 +40,9 @@
 
             <div class="vis-panel fill"  pos="left">
                 <div   class="fill">
-                   
+
                     <div ng-include="'views/filters.html'"  class="fill">
-                         
+
                     </div>
                 </div>
 
@@ -55,9 +55,9 @@
                     <div class="ui-widget vis-select-panel">
                         <label>Visualisation: </label>
                         <select ng-model="leftPanel" ng-options="vis for vis in content"/>
-                        
+
                     </div>
-                   
+
                 </div>
 
                 <div class="vis-panel fill" ng-switch on="leftPanel" pos="left">
@@ -67,11 +67,14 @@
                     <div ng-switch-when="network" class="fill">
                         <div ng-include="'views/network.html'"   class="fill"/>
                     </div>
-                    <div ng-switch-when="network new" class="fill">
+                    <div ng-switch-when="network (new)" class="fill">
                         <div ng-include="'views/network1.html'"   class="fill"/>
                     </div>
                     <div ng-switch-when="network fixed on time line" class="fill">
                         <div ng-include="'views/networkWithFixedX.html'"  class="fill"/>
+                    </div> 
+                    <div ng-switch-when="network fixed on time line (new)" class="fill">
+                        <div ng-include="'views/networkWithFixedX1.html'"  class="fill"/>
                     </div> 
                     <div ng-switch-when="map (dot)" class="fill">
                         <div id="leftDotMapPanel" ng-include="'views/map_dot.html'" class="fill"/>
@@ -100,11 +103,14 @@
                     <div ng-switch-when="network" class="fill">
                         <div ng-include="'views/network.html'"  class="fill"/>
                     </div>
-                    <div ng-switch-when="network new" class="fill">
+                    <div ng-switch-when="network (new)" class="fill">
                         <div ng-include="'views/network1.html'"   class="fill"/>
                     </div>
                     <div ng-switch-when="network fixed on time line" class="fill">
                         <div ng-include="'views/networkWithFixedX.html'"  class="fill"/>
+                    </div> 
+                    <div ng-switch-when="network fixed on time line (new)" class="fill">
+                        <div ng-include="'views/networkWithFixedX1.html'"  class="fill"/>
                     </div> 
                     <div ng-switch-when="map (dot)" class="fill">
                         <div id="rightDotMapPanel" ng-include="'views/map_dot.html'"  class="fill"/>

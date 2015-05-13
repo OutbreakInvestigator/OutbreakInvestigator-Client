@@ -10,7 +10,8 @@ angular.module('obiUiApp', [
     'ui.bootstrap',
     'leaflet-directive',
     'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize', 'ui.grid.exporter',
-    'ui.select'
+    'ui.select',
+    'ui-rangeSlider'
 ])
         .config(function ($routeProvider) {
             $routeProvider

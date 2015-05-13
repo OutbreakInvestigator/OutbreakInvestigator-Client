@@ -1,23 +1,87 @@
 {
     "queries": [
         {
-            "title":"Cases by report date range",
-            "template":"SELECT Case.*, IIF(Case.SEX =1 , 'Male',  'Female') AS Gender,Address.Lat,Address.StreetAddress,Address.Lng FROM Case,Address where Case.DbID=Address.Case_DbID and REPORT_DT >= #$1# AND REPORT_DT <= #$2#",
-            "args":[
-                {"var":"$1", "label":"begin date","valtype":"date", "default":"2009-09-01"},
-                {"var":"$2", "label":"end date","valtype":"date", "default":"2009-12-31"}
+            "title": "Cases by report date range",
+            "template": "SELECT Case.*, IIF(Case.SEX =1 , 'Male',  'Female') AS Gender,Address.Lat,Address.StreetAddress,Address.Lng FROM Case,Address where Case.DbID=Address.Case_DbID and REPORT_DT >= #$1# AND REPORT_DT <= #$2#",
+            "args": [
+                {
+                    "var": "$1",
+                    "label": "begin date",
+                    "valtype": "date",
+                    "default": "2009-09-01"
+                },
+                {
+                    "var": "$2",
+                    "label": "end date",
+                    "valtype": "date",
+                    "default": "2009-12-31"
+                }
+            ],
+            "allQueryFields": [ 
             ]
         },
         {
-            "title":"Cases by simple comparison",
-            "template":"SELECT Case.*, IIF(Case.SEX =1 , 'Male',  'Female') AS Gender, Address.Lat,Address.StreetAddress,Address.Lng FROM Case,Address where Case.DbID=Address.Case_DbID where $1 $2 '$3'",
-            "args":[
-                {"var":"$1", "label":"field name","valtype":"text", "default":"REPORT_DT"},
-                {"var":"$3", "label":"field value","valtype":"text", "default":"2009-09-01"},
-                {"var":"$2", "label":"comparison operator","valtype":"text", "vals":["=","<=",">="], "default":"="}
+            "title": "Cases by simple comparison",
+            "template": "SELECT Case.*, IIF(Case.SEX =1 , 'Male',  'Female') AS Gender, Address.Lat,Address.StreetAddress,Address.Lng FROM Case,Address where Case.DbID=Address.Case_DbID and $1 $2 $3",
+            "args": [
+                {
+                    "var": "$1",
+                    "label": "field name",
+                    "valtype": "select",
+                    "default": "REPORT_DT"
+                },
+                {
+                    "var": "$2",
+                    "label": "comparison operator",
+                    "valtype": "select",
+                    "vals": ["=", "<=", ">="],
+                    "default": "="
+                },
+                {
+                    "var": "$3",
+                    "label": "field value",
+                    "valtype": "text",
+                    "default": "2009-09-01"
+                }
+            ],
+            "allQueryFields": [
+                 {
+                    "field name": "Report_DT",
+                     "comparison operator": [],
+                    "data_type": "date"
+                },  {
+                    "field name": "Batch_DT",
+                     "comparison operator": [],
+                    "data_type": "date"
+                }, {
+                    "field name": "Onset_DT",
+                     "comparison operator": [],
+                    "data_type": "date"
+                },{
+                    "field name": "Hospital_DT",
+                     "comparison operator": [],
+                    "data_type": "date"
+                }, {
+                    "field name": "Investigation_Start_DT",
+                     "comparison operator": [],
+                    "data_type": "date"
+                },
+                {
+                    "field name": "AgeYears",
+                     "comparison operator": [],
+                    "data_type": "numeric"
+                } 
+               
             ]
         }
     ],
+    "allComparisonOperators": [{
+            "operator": "="
+        }, {
+            "operator": "<="
+        }, {
+            "operator": ">="
+        }],
     "vertex_query_url": "/OBIServices/rest/ads/vquery?query=",
     "edge_query_url": "/OBIServices/rest/ads/equery?query="
 }

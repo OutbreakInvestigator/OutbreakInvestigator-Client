@@ -57,6 +57,10 @@ angular.module('obiUiApp')
                     function resetTime(newVal)
                     {
                         var chart = dc.barChart("#timeline");
+                        chart.resetSvg();
+                        if(newVal.nodes.length === 0)
+                            return;
+                        
                         timelineService.setTimeline(chart);
                         var ndx = new crossfilter(newVal.nodes);
                         var dateDimension = ndx.dimension(function (d) {

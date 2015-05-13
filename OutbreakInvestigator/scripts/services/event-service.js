@@ -146,6 +146,9 @@ angular.module('obiUiApp')
             rebroadcastSelZipcodes: function(zipcodes, requestModuleID)
             {
                 $rootScope.$broadcast('selZipcodesUpdate',zipcodes,requestModuleID);
-            }
+            },
+             rebroadcastQueryStatus: function(isComplete) { 
+                $rootScope.$broadcast('queryStatus', isComplete);
+            },
         };
     });

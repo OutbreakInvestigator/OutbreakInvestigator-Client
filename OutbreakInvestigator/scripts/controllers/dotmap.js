@@ -151,10 +151,11 @@ angular.module('obiUiApp')
 
                         google.maps.event.addListener(marker, 'click', function (event) {
                             var ui_mode = eventService.getUIMode();
-                            if (ui_mode == 'select')
+                            var selectedCases = eventService.getSelCases();
+                            if (ui_mode === 'select')
                             {
-                                var selCases = eventService.getSelCases();
-                                if (selCases.length === 1 && selCases[0].dbid === marker.case.dbid)
+//                                var selectedCases = eventService.getSelCases();
+                                if (selectedCases.length === 1 && selectedCases[0].dbid === marker.case.dbid)
                                 {
                                     setSelected([]);
                                     eventService.setSelCases([], uid);
@@ -165,6 +166,20 @@ angular.module('obiUiApp')
                                     eventService.setSelCases([marker.case], uid);
                                 }
                             }
+                            else if (ui_mode === 'multiselect')
+                            { 
+                                var ind = $.inArray(marker.case, selectedCases);
+                                if (ind >= 0)
+                                {
+                                    selectedCases.splice(ind, 1); 
+                                }
+                                else
+                                {
+                                    selectedCases.push(marker.case); 
+                                }
+                                setSelected(selectedCases);
+                                eventService.setSelCases(selectedCases, uid);
+                          }
                             else if (ui_mode == 'information')
                             {
                                 displayInfo(marker);

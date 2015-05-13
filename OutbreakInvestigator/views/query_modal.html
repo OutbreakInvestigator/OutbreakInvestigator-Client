@@ -3,7 +3,7 @@
 <div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Fetch Data</h4>
+        <h4 class="modal-title" id="myModalLabel">Query Data</h4>
     </div>
     <div class="modal-body">
         <!--Precanned queries or query options here...-->
@@ -16,23 +16,28 @@
         <!--<span><a ng-repeat="(title,url) in queries">{{title}}</a></span>-->
         <fieldset>
             <div ng-repeat="query in queries">
-                <a ng-class='getClass(query.template)' href="javascript:void(0)" ng-click='setSelectedQuery(query.template)'>{{query.title}}</a></div>
+                <a ng-class='getClass(query.template)' href="javascript:void(0)" ng-click='setSelectedQuery(query.template, $index )'>{{query.title}}</a></div>
         </fieldset>
         <query-complete></query-complete>
 
         <div ng-if="selectedQuery">
             <hr>
             <div ng-repeat="query in queries | filter:{template: selectedQuery}">
-                <div ng-repeat="arg in query.args">{{arg.label}}: <input class="queryarg" type="{{arg.valtype}}" name="{{arg.var}}" value="{{arg.default}}"></div>
+                <div ng-repeat="arg in query.args">{{arg.label}}: 
+                    <input ng-if="arg.valtype!='select'" class="queryarg" type="{{arg.valtype}}" name="{{arg.var}}" value="{{arg.default}}">
+                    <select ng-if="arg.valtype=='select'" class="queryarg form-control" name="{{arg.var}}" value="{{arg.default}}" ng-model="myQueryField[arg.label]"   ng-options="f for f in  getQueryField(arg.label)"  >
+            </select>
+                </div>
             </div>
         </div>
 
     </div>
     <div class="modal-footer">
         <span>{{data.edges.length}}</span>
+        <loading></loading>
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
         <button type="button" class="btn btn-primary" ng-click="query(selectedQuery)">Execute</button>
-        <loading></loading>
+        
     </div>
 </div>
 

@@ -1,15 +1,14 @@
+ 
 
+.axis line {
+  stroke: #C0C0C0;
+}
 .link {
     fill: none;
     stroke: #666;
     stroke-width: 1.5px;
 }
-#licensing {
-    fill: green;
-}
-.link.licensing {
-    stroke: green;
-}
+ 
 .link.contact {
     stroke-dasharray: 0, 2 1;
 }

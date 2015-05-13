@@ -1,16 +1,18 @@
 <!-- ***** Copyright 2014 University of Washington (Neil Abernethy, Wilson Lau, Todd Detwiler)****-->
 <!-- ***** http://faculty.washington.edu/neila/ ****-->
 <div class="timeline-controls-panel">
-
+<div class="ui-widget button-panel" style="float: left;">
+        <label>Timeline: </label>
+        </div>
     <div class="btn-group btn-group-sm" style="float: right;">
         <label id="leftFilterSel" class="btn btn-primary" ng-model="radioModel" btn-radio="'Left'" ng-click="filterTargetSel($event)">
-            Edit Left Pane
+            <!--Edit Left Pane--><span title="Edit Left Pane" class="glyphicon glyphicon-arrow-left"></span>
         </label>
         <label id="linkedFilterSel" class="btn btn-primary" ng-model="radioModel" btn-radio="'Middle'" ng-click="filterTargetSel($event)">
-            <span class="glyphicon glyphicon-link"></span>
+            <span title="linked" class="glyphicon glyphicon-link"></span>
         </label>
         <label id="rightFilterSel" class="btn btn-primary" ng-model="radioModel" btn-radio="'Right'" ng-click="filterTargetSel($event)">
-            Edit Right Pane
+            <!--Edit Right Pane--><span title="Edit Right Pane" class="glyphicon glyphicon-arrow-right"></span>
         </label>
     </div>
 

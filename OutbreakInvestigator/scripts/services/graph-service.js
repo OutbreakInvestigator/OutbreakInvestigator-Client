@@ -3,7 +3,7 @@
 'use strict';
 
 angular.module('obiUiApp')
-        .service('graphService', function ($rootScope, $http, eventService) {
+        .service('graphService', function ( $http, eventService) {
             var graph;
             var graphOriginal;
             var loaded;
@@ -11,7 +11,10 @@ angular.module('obiUiApp')
 
             // query stuff
             var queries = [];
+            var queryIndex;
             var url;
+            var queryFields = [];
+            var comparisonOperators =[];
             var config = {headers:
                         {
                             'Accept': 'application/json'
@@ -22,6 +25,8 @@ angular.module('obiUiApp')
                     success(function (data, status) {
                         queries = data.queries;
                         url = data.vertex_query_url;
+                        //queryFields = [];
+                        comparisonOperators = data.allComparisonOperators;
                     }).
                     error(function (data, status) {
                         alert("failed to load query doc");
@@ -58,9 +63,37 @@ angular.module('obiUiApp')
                 getQueryURL: function () {
                     return url;
                 },
+                setQueryIndex: function(index){
+                    queryIndex=index;
+                     queryFields = queries[index].allQueryFields;
+                },
+                getAllQueryFields: function()
+                {
+                    return queryFields;
+                },
+                getQueryFields: function (name) {
+                    if(name === 'comparison operator')
+                        return this.getQueryComparison(name);
+                    else 
+                        return queryFields.map(function (value) {
+                             return value[name];
+                         });
+                },
+                getQueryField: function (name) {
+                   return queryFields.filter(function (value) {
+                             return value["field name"]===name;
+                         });
+                },
+                getQueryComparison: function (name) {
+                   return comparisonOperators.map(function (value) {
+                        return value.operator;
+                    });
+                },
                 executeQuery: function (query)
                 {
                     loaded = false;
+                    eventService.rebroadcastQueryStatus(loaded);
+        
                     $http.get(url + encodeURIComponent(query), config)
                             .
                             success(function (data, status) {
@@ -102,7 +135,8 @@ angular.module('obiUiApp')
                                 graphOriginal = {};
                                 angular.copy(graph, graphOriginal);
                                 loaded = true;
-                                eventService.rebroadcastResetUI();
+                                 eventService.rebroadcastQueryStatus(loaded);
+                                eventService.rebroadcastResetUI(); 
                             }).
                             error(function (data, status) {
                                 // $scope.status = status || "Request failed";

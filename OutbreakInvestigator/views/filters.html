@@ -3,7 +3,7 @@
 <div class="fill"  ng-controller="FiltersCtrl"    >
     <div class="fill panel panel-default" style="overflow: auto;">
         <div class="ui-widget button-panel">
-        <label>Filters: </label>
+            <label>Filters: </label>
         </div>
         <!--<div class="panel-body">-->
 
@@ -58,7 +58,7 @@
                     <div class="input-group" >   
                         <span class="input-group-addon"  >{{item.title}} </span>  
                         <ui-select multiple on-select="changeSelection($index,$item)" on-remove="changeSelection($index)"  ng-model="multiSelect.data[$index]" theme='select2'  ng-disabled="disabled" style="width: 100%;">
-                            <ui-select-match placeholder="{{ 'Select ' + item.title + ' ...'}}">{{$item}}</ui-select-match>
+                            <ui-select-match placeholder="{{ 'click here to add ' + item.title + ' ...'}}">{{$item}}</ui-select-match>
                             <ui-select-choices repeat="item in customFilter.getAvailableSelectItems(item.title) | filter:$select.search">
                                 {{item}}
                             </ui-select-choices>
@@ -73,19 +73,31 @@
                         <input   class="form-control" placeholder="" input-check  ng-model="filterValue"  required >                 
                     </div> 
                 </div> 
+                <!--<div   range-slider min="0" max="100" model-min="0" model-max="100" step="1"></div>-->
+
                 <div class="input-filter"   ng-attr-id="{{ 'filter-' + item.title + '-slider'}}">
                     <div class="input-group"  >
                         <span class="input-group-addon"  >{{item.title}} </span> 
-                        <input type="text"  class="form-control" ng-attr-id="{{ 'filter-' + item.title}}" readonly  
-                               placeholder="0 - 100" input-check  ng-model="filterValue"  ng-change="updatefilter($event)" 
+                        <input type="text" style="width: 50px"   ng-attr-id="{{ 'filter-' + item.title + '-min'}}"    
+                               on-change = "slider.modelMin[$index]" index="{{$index}}" slidertype='min'
+                               required> - 
+                        <!--                                  ng-model="slider.min[$index]"  onchange="changeSliderMin(this.id)" -->
+
+                        <input type="text"  style="width: 50px"  ng-attr-id="{{ 'filter-' + item.title + '-max'}}"    
+                               on-change = "slider.modelMax[$index]" index="{{$index}}" slidertype='max'
                                required>
-                        <div ng-attr-id="{{ 'filter-' + item.title + '-range'}}"></div>
+                        <!--                                 onchange="changeSliderMax(this)" -->
+
+                        <!--<input type="text" class="input-small ng-pristine ng-valid" ng-model="demo1.min">-->
+                        <!--<div ng-attr-id="{{ 'filter-' + item.title + '-range'}}"></div>-->
+                        <div ng-attr-id="{{ 'filter-' + item.title + '-range'}}" range-slider model-min="slider.modelMin[$index]" model-max="slider.modelMax[$index]"  min="slider.min[$index]" max="slider.max[$index]" show-values="true" on-handle-up="updateSlider(null,$index)"></div>
                     </div>
                 </div> 
+
                 <div class="input-filter"  ng-attr-id="{{ 'filter-' + item.title + '-radio'}}">
                     <div class="input-group" >   
                         <span class="input-group-addon"  >{{item.title}} </span>  
-                        <buttons-radio class="btn-group"    data-toggle="buttons-radio"  model='filterValue' options='radioFilters'></buttons-radio>
+                        <buttons-radio class="btn-group"    data-toggle="buttons"  model='filterValue' options='radioFilters'></buttons-radio>
                     </div>
                 </div> 
 
@@ -93,18 +105,17 @@
                 <a title="Radio Buttons" ng-click="toggleRadio(item.title, $index)"><i class="glyphicon glyphicon-th-large" style='padding-top: 5px'></i></a>
                 <a title="Range Slider" ng-click="toggleSlider(item.title, $index)"><i class="glyphicon glyphicon-resize-horizontal" style='padding-top: 5px'></i></a>
                 <a title="Delete" ng-click="deleteItem(item.title, $index)"><i class="glyphicon glyphicon-trash" style='padding-top: 5px;float: right;'></i></a>
-           <div class="alert alert-danger" role="alert" ng-attr-id="{{ 'filter-' + item.title + '-message'}}" style="display: none;">
+                <div class="alert alert-danger" role="alert" ng-attr-id="{{ 'filter-' + item.title + '-message'}}" style="display: none;">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" ></span>
-  <!--<span class="sr-only" ></span>--> 
+                    <!--<span class="sr-only" ></span>--> 
                 </div>
-                
-                 </li>
+
+            </li>
         </ul> 
-        <!--        <div class="info box">
-                    len:  {{filters[0]}}
-                </div>-->
+        
 
     </div>
 
 
 </div>
+ 

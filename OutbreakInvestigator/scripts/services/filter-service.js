@@ -115,6 +115,36 @@ angular.module('obiUiApp')
 
 
                 },
+                toggleFilter: function (name, filterValue)
+                {
+                    var filterData = {};
+                    angular.copy(newData, filterData);
+                    if ((!allFilterData[name]) && (filterValue !== null))
+                        filterData.list = [filterValue];
+                    else if (filterValue !== null) {
+                        filterData.list = allFilterData[name].list;
+                        var ind = $.inArray(filterValue, allFilterData[name].list);
+                        if (ind >= 0) {
+                            filterData.list.splice(ind, 1);
+                        }
+                        else if (filterData.list)
+                        {
+                            filterData.list.splice(0, 0, filterValue);
+                        }
+                        else
+                        {
+                            filterData.list = [filterValue];
+                        }
+                    }
+                    else
+                    {
+                        filterData.list = [];
+                    }
+                    this.setFilterData(name, filterData);
+
+
+
+                },
                 resetFilter: function (name)
                 {
                     this.setFilterData(name, newData);
@@ -124,11 +154,12 @@ angular.module('obiUiApp')
                     angular.copy(newData, ageData);
                     angular.copy(newData, genderData);
                     angular.copy(newData, diseaseData);
+                     
+                    allFilterData = {};
                 },
                 getFilteredCases: function (filterTimeline) {
 
                     return this.filterAll(graphService.getGraph(), filterTimeline);
-
                 },
                 getFilterData: function (name)
                 {

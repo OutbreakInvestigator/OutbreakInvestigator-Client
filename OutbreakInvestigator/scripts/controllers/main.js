@@ -9,7 +9,7 @@ angular.module('obiUiApp')
                 replace: true,
                 template: '<div class="glyphicon glyphicon-chevron-right glyphicon-refresh-animate"></div>',
                 link: function (scope, element, attr) {
-                   scope.$watch(graphService.isLoadingComplete, function (val) {
+                    scope.$watch(graphService.isLoadingComplete, function (val) {
                         if (!val) {
                             $(element).show();
                         }
@@ -35,6 +35,12 @@ angular.module('obiUiApp')
                         {
                             $(element).hide();
                         }
+                    });
+                    scope.$on('queryStatus', function (evt, isComplete) {
+                        if (isComplete)
+                            $(element).hide();
+                        else
+                            $(element).show();
                     });
                 }
             }
@@ -99,7 +105,7 @@ angular.module('obiUiApp')
                                     , spacing_open: 0 // ALL panes
                                 }
                                 , center__onresize_end: function (pane, $pane, state) {
-                                    $scope.$broadcast('visPanelResize', ['left'], state.outerWidth, state.outerHeight);
+                                    $scope.$broadcast('visPanelResize', ['left'], state.outerWidth, state.outerHeight - 30);  // strange. always about 30 more than actual value
                                 }
 
                                 /*
@@ -133,7 +139,7 @@ angular.module('obiUiApp')
                                     , spacing_open: 0 // ALL panes
                                 }
                                 , east__onresize_end: function (pane, $pane, state) {
-                                    $scope.$broadcast('visPanelResize', ['right'], state.outerWidth, state.outerHeight);
+                                    $scope.$broadcast('visPanelResize', ['right'], state.outerWidth, state.outerHeight - 30);  // strange. always about 30 more than actual value
                                 }
                             }
 
@@ -250,7 +256,7 @@ angular.module('obiUiApp')
 
             $scope.data = {};
             $scope.loading = 0;
-            $scope.content = ["[Select Content]", "table", "network", "network new", "network fixed on time line", "map (dot)", "map (choropleth)", "barchart"];
+            $scope.content = ["[Select Content]", "table", "network", "network (new)", "network fixed on time line", "network fixed on time line (new)", "map (dot)", "map (choropleth)", "barchart"];
 
             if ($scope.leftPanel == null)
             {
@@ -287,23 +293,45 @@ angular.module('obiUiApp')
                 $scope.chartSelection = $scope.charts[0];
             }
 
-        })
+        });
 
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, $http, graphService, eventService) {
+var ModalInstanceCtrl = function ($scope, $modalInstance, graphService, eventService) {
+    $scope.myQueryField = {};
     $scope.queries = graphService.getQueries();
     $scope.url = graphService.getQueryURL();
-    $scope.complete = function () {
-        return graphService.isLoadingComplete()
-    };
+    $scope.queryIndex;
 
+    $scope.$on('queryStatus', function (evt, isComplete) {
+        if (isComplete)
+            $scope.close(); 
+    });
+
+    $scope.complete = function () {
+        return graphService.isLoadingComplete();
+    };
+    $scope.getQueryField = function (name) {
+        return graphService.getQueryFields(name);
+    };
 
     $scope.close = function () {
         $modalInstance.dismiss('cancel');
     };
-
-    $scope.setSelectedQuery = function (query) {
+    $scope.setSelectedQuery = function (query, index) {
         $scope.$parent.selectedQuery = query;
+        $scope.queryIndex = index;
+        graphService.setQueryIndex(index);
+
+        // set selected default
+        var allQueryFields = graphService.getAllQueryFields();
+        if (allQueryFields.length > 0)
+        {
+            for (var name in allQueryFields[0]) {
+                var values = graphService.getQueryFields(name);
+                $scope.myQueryField[name] = values[0];
+            }
+        }
+
     };
 
     $scope.getClass = function (currQuery) {
@@ -331,8 +359,23 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, $http, graphService, e
         for (var i = 0; i < inputs.length; i++)
         {
             //console.log("arg #"+i+" = "+inputs[i].getAttribute("name"));
+            var value;
+            if (inputs[i].localName === 'select')
+            {
+                value = inputs[i].options[inputs[i].selectedIndex].label;
+            }
+            else if (graphService.getAllQueryFields().length === 0)
+                value = inputs[i].value;
+            else
+            {
+                // get the data type of this field 
+                var type = graphService.getQueryField(inputs[0].options[inputs[0].selectedIndex].label)[0].data_type;
+                if (type !== 'numeric')
+                    value = '#' + inputs[i].value + '#';
+                else
+                    value = inputs[i].value;
+            }
             var placeholder = inputs[i].getAttribute("name");
-            var value = inputs[i].value;
             querystring = querystring.replace(placeholder, value);
         }
 
@@ -340,7 +383,7 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, $http, graphService, e
 
         // build query string
         graphService.executeQuery(querystring);
-    }
+    };
 };
 
 angular.module('obiUiApp').directive('queryComplete', function (graphService) {

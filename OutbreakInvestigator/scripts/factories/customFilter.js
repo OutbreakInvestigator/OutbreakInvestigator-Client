@@ -43,20 +43,21 @@ angular.module('obiUiApp')
                 if (type === 'slider')
                 {
                     $("#filter-" + name + '-slider').show();
-                    var min = Math.min.apply(null, filterService.getAllFilterValues(name));
-                    var max = Math.max.apply(null, filterService.getAllFilterValues(name));
-                    $("#filter-" + name).val(min + " - " + max);
-                    $("#filter-" + name + '-range').slider({
-                        range: true,
-                        min: min,
-                        max: max,
-                        values: [min, max],
-                        stop: function (event, ui) {
-                            $("#filter-" + name).val(ui.values[ 0 ] + " - " + ui.values[ 1 ]);
-                            filterService.updateFilter(name, ui.values[ 0 ], ui.values[ 1 ], null);
-                        }
-
-                    });
+//                    var min = Math.min.apply(null, filterService.getAllFilterValues(name));
+//                    var max = Math.max.apply(null, filterService.getAllFilterValues(name));
+                    //$("#filter-" + name).val(min + " - " + max);
+                    $("#filter-" + name + '-range').show();
+//                    $("#filter-" + name + '-range').slider({
+//                        range: true,
+//                        min: min,
+//                        max: max,
+//                        values: [min, max],
+//                        stop: function (event, ui) {
+//                            $("#filter-" + name).val(ui.values[ 0 ] + " - " + ui.values[ 1 ]);
+//                            filterService.updateFilter(name, ui.values[ 0 ], ui.values[ 1 ], null);
+//                        }
+//
+//                    });
                 }
             };
             customFilter.checkNumeric = function (name)

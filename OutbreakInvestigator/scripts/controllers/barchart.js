@@ -50,12 +50,12 @@ angular.module('obiUiApp')
                         if ((position[0]) === getPosition(elem[0]))
                         {
                             elem.width(width);
-                            elem.height(height-30);
+                            elem.height(height - 30);
                             LEGEND_X = elem.width() - 70;
 
                             scope.chart.width(elem.width())
                                     .height(elem.height() - 30)
-                                 .legend(dc.legend().x(LEGEND_X).y(LEGEND_Y).itemHeight(ITEM_HEIGHT).gap(LABEL_GAP))
+                                    .legend(dc.legend().x(LEGEND_X).y(LEGEND_Y).itemHeight(ITEM_HEIGHT).gap(LABEL_GAP))
 
                             scope.chart.svg().style("height", height - 30).style("width", width);
                             scope.chart.render();
@@ -151,6 +151,8 @@ angular.module('obiUiApp')
                         scope.ChartUniqueValues = $.grep(chartValues, function (v, k) {
                             return $.inArray(v, chartValues) === k;
                         });
+ 
+                        scope.chart.yAxis().tickValues(yTickValues(scope.ChartUniqueValues, group.all()));
 
                         scope.chart.width(elem.width())
                                 .height(elem.height() - 30)
@@ -165,7 +167,7 @@ angular.module('obiUiApp')
                                 .valueAccessor(function (p) {
                                     return p.value[scope.ChartUniqueValues[0]] || 0;
                                 })
-
+                                .yAxisLabel("Cases")
                                 .x(d3.time.scale().domain([minDate, maxDate]))
                                 .elasticX(true)
                                 .xUnits(calculateXUnits)
@@ -177,21 +179,22 @@ angular.module('obiUiApp')
                         // .stack(femaleGroup,'Female')
 
 
-                        var others = scope.ChartUniqueValues.slice(1);
+                        var others = scope.ChartUniqueValues.slice(1); 
                         others.forEach(function (s) {
-                            scope.chart.stack(group, s, function (d) {
+                            scope.chart.stack(group, s, function (d) { 
                                 return d.value[s] || 0;
                             });
                         });
 
-//override the generated ones
+                        //override the generated ones
                         scope.chart.yAxis().tickFormat(d3.format("d"));
-
                         scope.chart.renderlet(function (_chart) {
                             _chart.selectAll("rect.bar").on("click", onClick);
                         });
- 
-                        scope.chart.render(); 
+
+                        scope.chart.render();
+//                        var yTickValues=[];var i=1;while(yTickValues.push(i++)<=maxY);
+//                        scope.chart.yAxis().tickValues(yTickValues);
                     }
                     ;
 
@@ -237,20 +240,7 @@ angular.module('obiUiApp')
                     ;
                     function createGroup(dimension)
                     {
-//                        return dimension.group().reduce(function (p, d) {
-//                            p[d[scope.chartSelection.data_field] + ''] = (p[d[scope.chartSelection.data_field] + ''] || 0) + 1;
-//                            return p;
-//                        },
-//                                function (p, d) {
-//                                    --p[d[scope.chartSelection.data_field] + ''];
-//                                    return p;
-//                                },
-//                                function () {
-//                                    return {};
-//                                }
-//                        );
                         return dimension.group().reduce(reduceAdd(), reduceRemove(), reduceInit);
-
                     }
                     ;
 
@@ -271,6 +261,8 @@ angular.module('obiUiApp')
                         return {};
                     }
 
+
+
                     function updateFilter(timelineFilter)
                     {
 
@@ -279,11 +271,19 @@ angular.module('obiUiApp')
 
                         var dateDimension = createDateDimension();
                         var group = createGroup(dateDimension);
- 
+                        var chartValues = scope.data.map(function (d) {
+                            return d[scope.chartSelection.data_field] + '';
+                        });
+                        scope.ChartUniqueValues = $.grep(chartValues, function (v, k) {
+                            return $.inArray(v, chartValues) === k;
+                        });
+
+                        scope.chart.yAxis().tickValues(yTickValues(scope.ChartUniqueValues, group.all()));
+
                         scope.chart
                                 .dimension(dateDimension)
                                 .elasticY(true)
-                                .brushOn(false) 
+                                .brushOn(false)
                                 .group(group, scope.ChartUniqueValues[0])
                                 .valueAccessor(function (p) {
                                     return p.value[scope.ChartUniqueValues[0] + ''] || 0;
@@ -292,11 +292,12 @@ angular.module('obiUiApp')
                                 .xUnits(calculateXUnits);
 
                         var others = scope.ChartUniqueValues.slice(1);
+
                         others.forEach(function (s) {
                             scope.chart.stack(group, s, function (d) {
                                 return d.value[s + ''] || 0;
                             });
-                        }); 
+                        });
 
                         if (timelineFilter) {
                             var timeline = timelineService.getTimeline();
@@ -365,9 +366,13 @@ angular.module('obiUiApp')
 
                         }
                         scope.chart.redraw();
-                        $timeout(function () {
-                            updateLegend();
+
+                        $timeout(function () { 
+                            updateLegend();                           
                         });
+                        $timeout(function () {  //render again in case the redraw animation fails
+                            scope.chart.render();
+                        },1000);
                     }
 //
 //                    function updateAllFilters(timelineFilter)
@@ -386,6 +391,23 @@ angular.module('obiUiApp')
 
 //                    }
 
+                    function yTickValues(uniqueGroups, groupData)
+                    {
+                        var maxY = 0;
+                        uniqueGroups.forEach(function (s) {
+                            groupData.forEach(function (d) {
+                                if (d.value[s] > maxY)
+                                    maxY = d.value[s];
+
+                            });
+                        });
+                         
+                        var yTickValues = [];
+                        var i = 1;
+                        while (yTickValues.push(i++) <= maxY)
+                            ;
+                        return yTickValues;
+                    }
 
                     function updateLegend()
                     {
